@@ -15,7 +15,7 @@ the page total only.
 
 ## Steps
 
-| # | Player sees | Player does | Teaches |
+| Step | Player sees | Player does | Teaches |
 |---|---|---|---|
 | 0 | Welcome card | Start | What the game is |
 | 1 | "Find the bee hiding on a leaf" | Taps the bee (wrong taps only shake the card) | Find |
