@@ -40,7 +40,8 @@ Skip is always visible and ends the tutorial.
 - All text is at least 17 pt; all tap targets are at least 44 pt.
 - No console errors in portrait at 390x844.
 
-## Open [?]
+## Decided (2026-10-31, Kondrat)
 
-- Shown on first launch with Skip, replayable from Settings? [?]
-- Rabbit and fox: a rule card on first find only, or also a small teaching page? [?]
+- Shown automatically on first launch. Skip is always visible; replay from Settings.
+- Rabbit and fox: a rule card on first find, and the first page with that creature is a simple
+  teaching page where its rule is the only thing to notice (GDD section 10).
