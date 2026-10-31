@@ -30,19 +30,24 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 
 ## Commands
 
-Not created yet. Planned for M0 (see SPEC section 5 and `.claude/skills/solver`):
+Run from the repo root (Node 22, no npm dependencies):
 
-- `tools/validate <page|all>`: unique solution, staged solvability, sizes, id consistency. Non-zero exit on failure.
-- `tools/generate <page> [--seed N] [--target easy|medium|hard]`
-- `tools/adjacency <page>`
-- `tools/preview <page>`: PNGs of three states into `docs/previews/`
+- `npm test`: unit tests (node:test) for geometry, rules, solver, parser, validator.
+- `npm run validate` or `node tools/validate.mjs <pageDir|all>`: unique solution, staged no-guess solving, sizes, page.json in sync. Exit 1 on failure.
+- `node tools/adjacency.mjs <pageDir>`: writes `page.json` (cells, neighbours, creatures, solution, stages, difficulty).
+- `node tools/preview.mjs <pageDir>`: three states (lines, clues, painted) into `docs/previews/`, plus PNG when Chromium is available.
+- Planned (M1): `tools/generate`.
 
 ## Repo map
 
 - `SPEC.md`: technical spec and milestones (M0 tools, M1 vertical slice).
-- `docs/gdd/GDD.md`: game design. `docs/art/ART_BRIEF.md`: art rules.
+- `docs/gdd/GDD.md`: game design. `docs/art/ART_BRIEF.md`: art rules. `docs/art/REFERENCES.md`: mood references (apps, not to copy).
 - `docs/DECISIONS.md`: decisions and open questions answers.
 - `.claude/agents/`: `game-designer`, `puzzle-engineer`, `artist`, `qa-tester`.
 - `.claude/skills/`: `page-format`, `solver`, `release`.
 - `pages/<chapter>/<id>/`: page.svg, page.json, page.overrides.json (not created yet).
-- `src/`, `tools/`, `docs/qa/`, `docs/previews/`: not created yet.
+- `src/`: rules (`src/rules/`), solver (`src/solver/`), page loading and validation (`src/page/`), limits.
+- `tools/`: validate, adjacency, preview.
+- `tests/`: unit tests. `pages/garden/test-m0/`: hand-made M0 fixture (not a playable page).
+- `docs/previews/`: generated previews. `docs/qa/`: not created yet.
+- `.github/workflows/ci.yml`: runs unit tests and validates all pages.
