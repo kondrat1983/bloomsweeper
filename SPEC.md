@@ -118,7 +118,8 @@ Play screen essentials:
 - the drawing fills the screen, pinch to zoom, two-finger pan, one-finger pan when not painting;
 - a creature list at the bottom: silhouettes with counters (Bees 1 of 3);
 - tap a hidden creature to find it; its clue badge appears;
-- tools: **Mark bloom**, **Mark green**, **Paint**, **Eraser**, **Hint**;
+- tools: **Find**, **Mark bloom**, **Mark green**, **Paint**, **Eraser**, **Hint** (Find is a separate
+  tool: one-finger pan and tap to find creatures, see DECISIONS 2026-10-31);
 - a wrong mark shows an ink blot on that cell and leaves it unknown; blots are counted in stats only;
 - **Hint:** points to the next provable deduction and highlights the clue cells involved; it never
   just fills a cell;
