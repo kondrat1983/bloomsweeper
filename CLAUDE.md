@@ -14,6 +14,8 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 - All art and puzzles are original. Do not copy or trace other artists or games, even as placeholders.
 - Public repo: no personal data, no keys.
 - No UI code until Kondrat approves the static play-screen mock-up on Pages.
+- Autotests from the first commit of every feature (Node test runner, Playwright). Manual checks in Chrome.
+  Manual test cases live in Google Sheets folder "Bloomsweeper QA" (see DECISIONS, 2026-10-31).
 - Creatures' rules (M1): bee (n of neighbours BLOOM), rabbit (cell and neighbours GREEN), fox
   (no BLOOM within two steps). Confirm in DECISIONS before coding them.
 
