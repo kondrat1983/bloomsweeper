@@ -1,0 +1,46 @@
+# CLAUDE.md: Bloomsweeper
+
+Logic coloring game: find creatures, deduce BLOOM/GREEN cells, paint the page. Spec: `SPEC.md`.
+Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISIONS.md` (newest first).
+
+## Rules for work in this repo
+
+- Talk to Kondrat in Russian, briefly. He works mostly from his phone.
+- Test first for anything with rules: adjacency, rule evaluation, solver, validator, save format.
+  Test behaviour, not implementation. Fix root causes.
+- Small ordered commits, one feature per PR. Each PR lists what Kondrat must check on iPhone/iPad.
+- Never ship a page that fails validation (unique solution, staged no-guess solvability, touch sizes).
+- Rules engine lives in `src/rules/` and is shared by app and tools. Never duplicate rule logic.
+- All art and puzzles are original. Do not copy or trace other artists or games, even as placeholders.
+- Public repo: no personal data, no keys.
+- No UI code until Kondrat approves the static play-screen mock-up on Pages.
+- Creatures' rules (M1): bee (n of neighbours BLOOM), rabbit (cell and neighbours GREEN), fox
+  (no BLOOM within two steps). Confirm in DECISIONS before coding them.
+
+## Stack (proposed, confirm in DECISIONS)
+
+- Vanilla JS, ES modules, SVG. No build step if possible; at most Vite as a single dev dependency.
+- Node tools in `tools/`; Node built-in test runner; Playwright with the preinstalled Chromium
+  (do not run `playwright install`).
+- PWA on GitHub Pages from `main`, offline after first load, cache name bumped per version.
+- Audio: synthesized Web Audio only, no audio files.
+- CI on GitHub Actions for every PR.
+
+## Commands
+
+Not created yet. Planned for M0 (see SPEC section 5 and `.claude/skills/solver`):
+
+- `tools/validate <page|all>`: unique solution, staged solvability, sizes, id consistency. Non-zero exit on failure.
+- `tools/generate <page> [--seed N] [--target easy|medium|hard]`
+- `tools/adjacency <page>`
+- `tools/preview <page>`: PNGs of three states into `docs/previews/`
+
+## Repo map
+
+- `SPEC.md`: technical spec and milestones (M0 tools, M1 vertical slice).
+- `docs/gdd/GDD.md`: game design. `docs/art/ART_BRIEF.md`: art rules.
+- `docs/DECISIONS.md`: decisions and open questions answers.
+- `.claude/agents/`: `game-designer`, `puzzle-engineer`, `artist`, `qa-tester`.
+- `.claude/skills/`: `page-format`, `solver`, `release`.
+- `pages/<chapter>/<id>/`: page.svg, page.json, page.overrides.json (not created yet).
+- `src/`, `tools/`, `docs/qa/`, `docs/previews/`: not created yet.
