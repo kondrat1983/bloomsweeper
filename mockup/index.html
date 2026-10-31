@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fffaf0">
+<title>Bloomsweeper play screen mock-up</title>
+<style>
+  :root {
+    --paper: #fffaf0;
+    --ink: #1f1d1a;
+    --gold: #b8913f;
+    --gold-soft: #f3e6c4;
+    --muted: #6b655c;
+    --line: #e7dfcf;
+    --ui: #fbf5e8;
+    --desk: #ece4d2;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body {
+    background: var(--desk);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  .intro, .label {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 16px;
+    font-size: 17px;
+    line-height: 1.4;
+  }
+  .intro h1 { font-size: 22px; margin-bottom: 6px; }
+  .intro p + p { margin-top: 8px; }
+  .intro a { color: var(--ink); font-weight: 600; text-underline-offset: 3px; }
+  .label { padding: 20px 16px 8px; font-weight: 600; color: var(--muted); }
+  .screen {
+    position: relative;
+    max-width: 430px;
+    margin: 0 auto;
+    height: 100svh;
+    min-height: 620px;
+    max-height: 932px;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    overflow: hidden;
+    border-radius: 0;
+  }
+  @media (min-width: 500px) {
+    .screen { border-radius: 28px; box-shadow: 0 10px 40px rgba(31, 29, 26, .18); max-height: 844px; }
+  }
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: calc(env(safe-area-inset-top) + 6px) 8px 6px;
+    background: var(--ui);
+    border-bottom: 1px solid var(--line);
+  }
+  .iconbtn {
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    border: 0; background: none; color: var(--ink);
+    border-radius: 12px;
+  }
+  .iconbtn svg { width: 24px; height: 24px; }
+  .title { flex: 1; min-width: 0; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .count {
+    display: flex; align-items: center; gap: 6px;
+    height: 36px; padding: 0 12px;
+    border-radius: 18px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .count svg { width: 18px; height: 18px; }
+  .canvas { position: relative; flex: 1; min-height: 0; background: var(--paper); }
+  .canvas > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .zoom {
+    position: absolute; right: 10px; top: 10px;
+    height: 32px; padding: 0 10px;
+    display: flex; align-items: center;
+    border-radius: 16px;
+    background: rgba(255, 250, 240, .92);
+    border: 1px solid var(--line);
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+  }
+  .bubble {
+    position: absolute; left: 10px; right: 10px; bottom: 10px;
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 17px;
+    line-height: 1.35;
+    box-shadow: 0 6px 20px rgba(31, 29, 26, .25);
+  }
+  .bubble svg { flex: none; width: 22px; height: 22px; margin-top: 1px; }
+  .bubble b { color: #f0d79a; }
+  .tray {
+    display: flex; gap: 8px;
+    padding: 8px 10px;
+    overflow-x: auto;
+    background: var(--ui);
+    border-top: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+  .tray::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    display: flex; align-items: center; gap: 6px;
+    height: 44px; padding: 0 12px 0 8px;
+    border-radius: 22px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .chip svg { width: 28px; height: 28px; }
+  .chip.done { border-color: var(--gold); background: var(--gold-soft); }
+  .chip.hidden { color: var(--muted); border-style: dashed; }
+  .palette {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    background: var(--ui);
+    border-top: 1px solid var(--line);
+  }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; flex: none; }
+  .seg span { padding: 0 10px; height: 36px; display: grid; place-items: center; font-size: 17px; background: var(--paper); }
+  .seg span.on { background: var(--ink); color: var(--paper); }
+  .swatches { display: flex; gap: 6px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .swatches::-webkit-scrollbar { display: none; }
+  .sw { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--line); }
+  .sw.on { box-shadow: 0 0 0 2px var(--ink); }
+  .auto { flex: none; height: 36px; padding: 0 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); font-size: 17px; }
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    padding: 4px 4px calc(env(safe-area-inset-bottom) + 6px);
+    background: var(--ui);
+    border-top: 1px solid var(--line);
+  }
+  .tool {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-height: 58px;
+    border: 0; background: none; color: var(--ink);
+    border-radius: 14px;
+    font-size: 17px;
+    letter-spacing: -0.3px;
+  }
+  .tool svg { width: 26px; height: 26px; }
+  .tool.on { background: var(--gold-soft); box-shadow: inset 0 -3px 0 var(--gold); }
+  .notes { max-width: 430px; margin: 0 auto; padding: 24px 16px 48px; font-size: 17px; line-height: 1.45; }
+  .notes h2 { font-size: 20px; margin-bottom: 8px; }
+  .notes li { margin: 6px 0 0 20px; }
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <h1>Play screen mock-up v1</h1>
+  <p>Static, not playable. Scroll through three moments of one page: <b>Find</b>, <b>Deduce</b>, <b>Paint</b>.</p>
+  <p>The drawing is a procedural placeholder, original art in the spirit of Hidden Folks. Final art comes later.</p>
+  <p><a href="tutorial.html">Play the tutorial mock-up (first-time experience) →</a></p>
+</header>
+
+<p class="label">1 of 3 · Find: a bee is found</p>
+<section class="screen" data-state="find"></section>
+
+<p class="label">2 of 3 · Deduce: marks, an ink blot and a hint</p>
+<section class="screen" data-state="deduce"></section>
+
+<p class="label">3 of 3 · Paint: painting reveals the fox</p>
+<section class="screen" data-state="paint"></section>
+
+<section class="notes">
+  <h2>What to check on the iPhone</h2>
+  <ul>
+    <li>Can you read the bee numbers and the counters without zooming the browser?</li>
+    <li>Are the six tools easy to hit with a thumb?</li>
+    <li>Do BLOOM (dots) and GREEN (hatch) marks look different enough?</li>
+    <li>Does the drawing feel dense and cozy, like a coloring book?</li>
+    <li>Does anything sit under the notch or the home indicator?</li>
+  </ul>
+</section>
+
+<script>
+// Mock-up only. Not game code: no rules, no input handling.
+(function () {
+  const W = 600, H = 920;
+  const f = (n) => (Math.round(n * 10) / 10).toString();
+
+  function rng(seed) {
+    return function () {
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const R = rng(20261031);
+  const rand = (a, b) => a + R() * (b - a);
+
+  // ---------- layout: flowers and leaves, no overlaps ----------
+  const items = [];
+  function fits(x, y, r) {
+    if (x - r < 4 || y - r < 4 || x + r > W - 4 || y + r > H - 4) return false;
+    for (const it of items) if (Math.hypot(it.x - x, it.y - y) < it.r + r + 3) return false;
+    return true;
+  }
+  items.push({ kind: 'flower', type: 'rosette', x: 300, y: 470, r: 88, rot: 0 });
+  const flowerTypes = ['five', 'daisy', 'star', 'five', 'daisy', 'rosette'];
+  const passes = [[46, 58], [36, 46], [28, 36], [22, 28]];
+  for (const [lo, hi] of passes) {
+    for (let a = 0; a < 2600; a++) {
+      const leaf = R() < 0.47;
+      const r = rand(lo, hi);
+      const x = rand(0, W), y = rand(0, H);
+      if (!fits(x, y, r)) continue;
+      if (leaf) items.push({ kind: 'leaf', type: R() < 0.7 ? 'lens' : 'oak', x, y, r, rot: rand(0, Math.PI), w: rand(0.4, 0.5) });
+      else items.push({ kind: 'flower', type: flowerTypes[Math.floor(R() * flowerTypes.length)], x, y, r, rot: rand(0, Math.PI * 2) });
+    }
+  }
+
+  // ---------- shapes ----------
+  function smooth(pts) {
+    const n = pts.length;
+    const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const m = mid(pts[n - 1], pts[0]);
+    let d = `M${f(m[0])} ${f(m[1])}`;
+    for (let i = 0; i < n; i++) {
+      const p = pts[i], q = mid(pts[i], pts[(i + 1) % n]);
+      d += `Q${f(p[0])} ${f(p[1])} ${f(q[0])} ${f(q[1])}`;
+    }
+    return d + 'Z';
+  }
+  function radius(it, t) {
+    const c = (k, p) => Math.pow(Math.abs(Math.cos(k * (t + it.rot))), p);
+    switch (it.type) {
+      case 'five': return it.r * (0.56 + 0.44 * c(2.5, 0.7));
+      case 'daisy': return it.r * (0.74 + 0.26 * c(6, 0.5));
+      case 'star': return it.r * (0.5 + 0.5 * c(2.5, 1.8));
+      default: return it.r * (0.86 + 0.14 * c(4, 0.8)); // rosette
+    }
+  }
+  function flowerPath(it, scale = 1) {
+    const N = 120, pts = [];
+    for (let i = 0; i < N; i++) {
+      const t = (i / N) * Math.PI * 2;
+      const r = radius(it, t) * scale;
+      pts.push([it.x + r * Math.cos(t), it.y + r * Math.sin(t)]);
+    }
+    return smooth(pts);
+  }
+  function leafLocal(it) {
+    const L = it.r * 0.98, w = it.r * it.w, N = 30, top = [], bot = [];
+    for (let i = 0; i <= N; i++) {
+      const t = (i / N) * Math.PI;
+      let hw = w * Math.pow(Math.sin(t), 0.85);
+      if (it.type === 'oak') hw *= 0.8 + 0.2 * Math.abs(Math.sin(t * 6));
+      const x = -L + (2 * L * i) / N;
+      top.push([x, -hw]);
+      bot.push([x, hw]);
+    }
+    return top.concat(bot.slice(1, -1).reverse());
+  }
+  function tf(it, p) {
+    const c = Math.cos(it.rot), s = Math.sin(it.rot);
+    return [it.x + p[0] * c - p[1] * s, it.y + p[0] * s + p[1] * c];
+  }
+  function leafPath(it) { return smooth(leafLocal(it).map((p) => tf(it, p))); }
+  function cellPath(it) { return it.kind === 'leaf' ? leafPath(it) : flowerPath(it); }
+
+  // inner decoration of a cell (never interactive)
+  function cellDeco(it) {
+    let s = '';
+    if (it.kind === 'leaf') {
+      const L = it.r * 0.9;
+      const a = tf(it, [-L, 0]), b = tf(it, [L, 0]);
+      s += `<path d="M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}"/>`;
+      for (let k = -2; k <= 2; k++) {
+        if (k === 0) continue;
+        const x0 = (k * L) / 3.2, x1 = x0 + L * 0.28, y1 = it.r * it.w * 0.62;
+        for (const sg of [-1, 1]) {
+          const p = tf(it, [x0, 0]), q = tf(it, [x1, sg * y1]);
+          s += `<path d="M${f(p[0])} ${f(p[1])}L${f(q[0])} ${f(q[1])}"/>`;
+        }
+      }
+      return s;
+    }
+    s += `<circle cx="${f(it.x)}" cy="${f(it.y)}" r="${f(it.r * 0.2)}"/>`;
+    if (it.type === 'five' || it.type === 'star') {
+      for (let k = 0; k < 5; k++) {
+        const t = (k * Math.PI * 2) / 5 - it.rot;
+        const a = [it.x + it.r * 0.26 * Math.cos(t), it.y + it.r * 0.26 * Math.sin(t)];
+        const b = [it.x + it.r * 0.62 * Math.cos(t), it.y + it.r * 0.62 * Math.sin(t)];
+        s += `<path d="M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}"/>`;
+      }
+    } else if (it.type === 'daisy') {
+      s += `<circle cx="${f(it.x)}" cy="${f(it.y)}" r="${f(it.r * 0.36)}"/>`;
+      for (let k = 0; k < 8; k++) {
+        const t = (k * Math.PI * 2) / 8;
+        s += `<circle cx="${f(it.x + it.r * 0.1 * Math.cos(t))}" cy="${f(it.y + it.r * 0.1 * Math.sin(t))}" r="1.2" class="dot"/>`;
+      }
+    } else {
+      s += `<path d="${flowerPath(it, 0.62)}"/><path d="${flowerPath(it, 0.38)}"/>`;
+    }
+    return s;
+  }
+
+  // ---------- decoration in the gaps ----------
+  function clearance(x, y) {
+    let d = Infinity;
+    for (const it of items) d = Math.min(d, Math.hypot(it.x - x, it.y - y) - it.r);
+    return d;
+  }
+  const decoPts = [];
+  let deco = '';
+  for (let a = 0; a < 5000; a++) {
+    const x = rand(4, W - 4), y = rand(4, H - 4);
+    const c = clearance(x, y);
+    if (c < 5) continue;
+    if (decoPts.some((p) => Math.hypot(p[0] - x, p[1] - y) < 10)) continue;
+    decoPts.push([x, y]);
+    if (c > 18 && R() < 0.5) {
+      // curl
+      const turns = 1.6, steps = 26, r0 = Math.min(c - 4, 14);
+      let d = '';
+      for (let i = 0; i <= steps; i++) {
+        const t = (i / steps) * turns * Math.PI * 2;
+        const rr = r0 * (1 - i / steps) + 1;
+        d += `${i ? 'L' : 'M'}${f(x + rr * Math.cos(t))} ${f(y + rr * Math.sin(t))}`;
+      }
+      deco += `<path d="${d}"/>`;
+    } else if (c > 10 && R() < 0.5) {
+      // berries
+      for (let k = 0; k < 3; k++) {
+        const t = (k * Math.PI * 2) / 3 + R();
+        deco += `<circle cx="${f(x + 4 * Math.cos(t))}" cy="${f(y + 4 * Math.sin(t))}" r="2.6"/>`;
+      }
+    } else {
+      deco += `<circle cx="${f(x)}" cy="${f(y)}" r="1.3" class="dot"/>`;
+    }
+  }
+  // stems: short arcs from flowers into free space
+  for (const it of items) {
+    if (it.kind !== 'flower' || it.r < 30) continue;
+    let best = null;
+    for (let k = 0; k < 12; k++) {
+      const t = (k * Math.PI * 2) / 12;
+      const px = it.x + (it.r + 16) * Math.cos(t), py = it.y + (it.r + 16) * Math.sin(t);
+      const c = clearance(px, py);
+      if (!best || c > best.c) best = { t, c };
+    }
+    if (!best || best.c < 6) continue;
+    const t = best.t;
+    const a = [it.x + (radius(it, t) + 1) * Math.cos(t), it.y + (radius(it, t) + 1) * Math.sin(t)];
+    const b = [it.x + (it.r + best.c + 10) * Math.cos(t), it.y + (it.r + best.c + 10) * Math.sin(t)];
+    const m = [(a[0] + b[0]) / 2 + 8 * Math.cos(t + 1.57), (a[1] + b[1]) / 2 + 8 * Math.sin(t + 1.57)];
+    deco += `<path d="M${f(a[0])} ${f(a[1])}Q${f(m[0])} ${f(m[1])} ${f(b[0])} ${f(b[1])}"/>`;
+  }
+
+  // ---------- creatures on leaves ----------
+  const leaves = items.filter((i) => i.kind === 'leaf');
+  const taken = new Set();
+  function leafNear(x, y) {
+    let best = null;
+    for (const l of leaves) {
+      if (taken.has(l) || l.r < 26 || l.x < 110 || l.x > W - 110 || l.y < 90 || l.y > 680) continue;
+      const d = Math.hypot(l.x - x, l.y - y);
+      if (!best || d < best.d) best = { l, d };
+    }
+    taken.add(best.l);
+    return best.l;
+  }
+  const near = (a, b) => Math.hypot(a.x - b.x, a.y - b.y) < a.r + b.r + 20;
+  const neighbours = (it) => items.filter((o) => o !== it && near(it, o));
+
+  const beeA = leafNear(170, 250);
+  const beeB = leafNear(440, 600);
+  const beeC = leafNear(470, 170);
+  const rabbit = leafNear(160, 600);
+  const fox = leafNear(400, 320);
+
+  // simple mock solution: flowers bloom, except near rabbit and fox (they keep things green)
+  const quiet = new Set([rabbit, ...neighbours(rabbit), fox, ...neighbours(fox), ...neighbours(fox).flatMap(neighbours)]);
+  for (const it of items) it.bloom = it.kind === 'flower' && !quiet.has(it);
+  // the hinted bee keeps its two largest flowers in bloom; the rest of its neighbours stay green
+  neighbours(beeB).filter((o) => o.kind === 'flower').sort((a, b) => b.r - a.r).slice(2).forEach((o) => { o.bloom = false; });
+  const totalBlooms = items.filter((i) => i.bloom).length;
+  const nOf = (bee) => neighbours(bee).filter((o) => o.bloom).length;
+  beeA.n = nOf(beeA);
+  beeB.n = nOf(beeB);
+  beeC.n = nOf(beeC);
+
+  // creature drawings, local coordinates, same stroke as cells
+  function beeSvg(it) {
+    const s = Math.min(1, it.r / 34);
+    return `<g transform="translate(${f(it.x)} ${f(it.y)}) rotate(${f((it.rot * 180) / Math.PI)}) scale(${f(s)})">
+      <ellipse cx="-7" cy="-9" rx="7" ry="4.5" transform="rotate(-25 -7 -9)" class="wing"/>
+      <ellipse cx="3" cy="-10" rx="7" ry="4.5" transform="rotate(20 3 -10)" class="wing"/>
+      <ellipse cx="0" cy="0" rx="12" ry="7.5"/>
+      <path d="M-4 -7Q-6 0 -4 7M2 -7.4Q0 0 2 7.4"/>
+      <circle cx="14" cy="0" r="4.5"/>
+      <path d="M-12 0L-16 0"/>
+    </g>`;
+  }
+  function rabbitSvg(it) {
+    return `<g transform="translate(${f(it.x)} ${f(it.y)}) rotate(-12)">
+      <ellipse cx="-3" cy="5" rx="12" ry="9"/>
+      <circle cx="9" cy="-3" r="6.5"/>
+      <ellipse cx="7" cy="-16" rx="2.6" ry="8" transform="rotate(-12 7 -16)"/>
+      <ellipse cx="13" cy="-15" rx="2.6" ry="8" transform="rotate(14 13 -15)"/>
+      <circle cx="-15" cy="4" r="3.2"/>
+      <circle cx="11" cy="-4" r="0.9" class="dot"/>
+    </g>`;
+  }
+  function foxSvg(it) {
+    return `<g transform="translate(${f(it.x)} ${f(it.y)})">
+      <path d="M-13 -6L-9 -18L-3 -10L3 -10L9 -18L13 -6Q10 8 0 11Q-10 8 -13 -6Z"/>
+      <path d="M-6 0L-3 1M6 0L3 1M-1 6L1 6"/>
+      <path d="M12 6Q26 2 28 14Q20 20 10 12"/>
+    </g>`;
+  }
+
+  // badges, sized to read at phone scale (about 0.65 px per unit)
+  function hexBadge(x, y, n) {
+    let d = '';
+    for (let k = 0; k < 6; k++) {
+      const t = (k * Math.PI) / 3 + Math.PI / 6;
+      d += `${k ? 'L' : 'M'}${f(x + 21 * Math.cos(t))} ${f(y + 21 * Math.sin(t))}`;
+    }
+    return `<g class="badge"><path d="${d}Z"/><text x="${f(x)}" y="${f(y + 1)}">${n}</text></g>`;
+  }
+  function roundBadge(x, y, icon) {
+    return `<g class="badge"><circle cx="${f(x)}" cy="${f(y)}" r="20"/>${icon(x, y)}</g>`;
+  }
+  const rabbitIcon = (x, y) => `<g class="ico" transform="translate(${f(x)} ${f(y)})"><circle cx="0" cy="5" r="6"/><ellipse cx="-3" cy="-6" rx="2.2" ry="7"/><ellipse cx="3" cy="-6" rx="2.2" ry="7"/></g>`;
+  const pawIcon = (x, y) => `<g class="ico" transform="translate(${f(x)} ${f(y)})"><ellipse cx="0" cy="5" rx="6" ry="5"/><circle cx="-7" cy="-3" r="2.6"/><circle cx="-2.5" cy="-8" r="2.6"/><circle cx="2.5" cy="-8" r="2.6"/><circle cx="7" cy="-3" r="2.6"/></g>`;
+
+  function blob(x, y) {
+    const pts = [];
+    for (let i = 0; i < 18; i++) {
+      const t = (i / 18) * Math.PI * 2;
+      const r = 15 * (1 + 0.28 * Math.sin(3 * t + 0.4) + 0.16 * Math.sin(7 * t + 1.3));
+      pts.push([x + r * Math.cos(t), y + r * Math.sin(t)]);
+    }
+    return `<g class="blot"><path d="${smooth(pts)}"/><circle cx="${f(x + 22)}" cy="${f(y - 9)}" r="3"/><circle cx="${f(x - 19)}" cy="${f(y + 14)}" r="2.2"/><circle cx="${f(x + 8)}" cy="${f(y + 22)}" r="1.6"/></g>`;
+  }
+
+  // palettes (Spring)
+  const flowerPal = ['#f2a7b8', '#f6c27a', '#c7a8e0', '#f08f7a', '#9cc7ec', '#f7dc7c'];
+  const leafPal = ['#a9cf94', '#7fb17a', '#c9dc9a', '#8fbfa6'];
+
+  // ---------- one screen ----------
+  function drawing(state) {
+    const marks = new Map(); // item -> 'B' | 'G'
+    const painted = new Map(); // item -> colour
+    const outline = new Set();
+    let creatures = '', badges = '', overlays = '';
+
+    const markNeighbours = (bee) => neighbours(bee).forEach((o) => marks.set(o, o.bloom ? 'B' : 'G'));
+
+    if (state !== 'find') {
+      markNeighbours(beeA);
+      marks.set(beeA, 'G');
+      [rabbit, ...neighbours(rabbit)].forEach((o) => marks.set(o, 'G'));
+      marks.set(beeB, 'G');
+      neighbours(beeB).filter((o) => o.bloom).forEach((o) => marks.set(o, 'B'));
+    }
+    let victim = null;
+    if (state === 'deduce') {
+      victim = neighbours(rabbit).find((o) => o.kind === 'flower' && !near(o, beeB)) || null;
+      if (victim) marks.delete(victim);
+      neighbours(beeB).filter((o) => !marks.has(o)).forEach((o) => outline.add(o));
+      outline.add(beeB);
+    }
+    if (state === 'paint') {
+      markNeighbours(beeB);
+      [fox, ...neighbours(fox)].forEach((o) => marks.set(o, 'G'));
+      for (const it of items) if (it.x < 430 && !marks.has(it)) marks.set(it, it.bloom ? 'B' : 'G');
+      let fi = 0, li = 0;
+      for (const [it, m] of marks) {
+        if (it.x > 470) continue;
+        painted.set(it, m === 'B' ? flowerPal[fi++ % flowerPal.length] : leafPal[li++ % leafPal.length]);
+      }
+    }
+
+    let cells = '';
+    for (const it of items) {
+      let fill = 'var(--paper)';
+      const m = marks.get(it);
+      if (painted.has(it)) fill = painted.get(it);
+      else if (m === 'B') fill = 'url(#bloomDots)';
+      else if (m === 'G') fill = 'url(#greenHatch)';
+      cells += `<path d="${cellPath(it)}" fill="${fill}"/>`;
+    }
+    let inner = '';
+    for (const it of items) inner += cellDeco(it);
+
+    // creatures: always drawn in ink (camouflaged); found ones get badges
+    creatures += beeSvg(beeA) + beeSvg(beeB) + beeSvg(beeC) + rabbitSvg(rabbit);
+    if (state === 'paint') creatures += foxSvg(fox);
+
+    if (state === 'find') {
+      overlays += `<circle cx="${f(beeA.x)}" cy="${f(beeA.y)}" r="30" class="ripple"/><circle cx="${f(beeA.x)}" cy="${f(beeA.y)}" r="44" class="ripple faint"/>`;
+      badges += hexBadge(beeA.x + 4, beeA.y - 34, beeA.n);
+    } else {
+      badges += hexBadge(beeA.x + 4, beeA.y - 34, beeA.n);
+      badges += hexBadge(beeB.x + 4, beeB.y - 34, beeB.n);
+      badges += roundBadge(rabbit.x + 2, rabbit.y - 36, rabbitIcon);
+    }
+    if (state === 'deduce') {
+      // wrong mark: an ink blot on a rabbit neighbour the player tried to bloom
+      if (victim) overlays += blob(victim.x, victim.y);
+      for (const it of outline) overlays += `<path d="${cellPath(it)}" class="hint"/>`;
+    }
+    if (state === 'paint') {
+      overlays += `<circle cx="${f(fox.x)}" cy="${f(fox.y)}" r="150" class="reach"/>`;
+      badges += roundBadge(fox.x + 2, fox.y - 38, pawIcon);
+      for (let k = 0; k < 6; k++) {
+        const t = (k * Math.PI) / 3 + 0.3;
+        const a = [fox.x + 34 * Math.cos(t), fox.y + 34 * Math.sin(t)];
+        const b = [fox.x + 44 * Math.cos(t), fox.y + 44 * Math.sin(t)];
+        overlays += `<path d="M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}" class="spark"/>`;
+      }
+    }
+
+    return {
+      svg: `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-label="Page drawing">
+        <defs>
+          <pattern id="bloomDots" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fbe1e7"/><circle cx="5" cy="5" r="2" fill="#c9506f"/></pattern>
+          <pattern id="greenHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#e3efd8"/><line x1="0" y1="0" x2="0" y2="7" stroke="#6f9b5f" stroke-width="1.6"/></pattern>
+          <style>
+            .deco path,.deco circle{fill:none;stroke:#1f1d1a;stroke-width:1;stroke-linecap:round}
+            .deco .dot,.inner .dot{fill:#1f1d1a;stroke:none}
+            .cells path{stroke:#1f1d1a;stroke-width:1.6;stroke-linejoin:round}
+            .inner path,.inner circle{fill:none;stroke:#1f1d1a;stroke-width:0.8;stroke-linecap:round}
+            .creatures path,.creatures ellipse,.creatures circle{fill:#fffaf0;stroke:#1f1d1a;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+            .creatures .wing{fill:#fffaf0;opacity:.95}
+            .creatures .dot{fill:#1f1d1a;stroke:none}
+            .badge path,.badge circle{fill:#f3e6c4;stroke:#b8913f;stroke-width:2.5}
+            .badge text{font:700 27px -apple-system,BlinkMacSystemFont,Arial,sans-serif;fill:#1f1d1a;text-anchor:middle;dominant-baseline:central}
+            .badge .ico ellipse,.badge .ico circle{fill:#1f1d1a;stroke:none}
+            .ripple{fill:none;stroke:#b8913f;stroke-width:3}
+            .ripple.faint{opacity:.45}
+            .hint{fill:none;stroke:#b8913f;stroke-width:4.5;stroke-dasharray:10 7;stroke-linecap:round}
+            .blot path,.blot circle{fill:#1f1d1a;opacity:.86}
+            .reach{fill:none;stroke:#b8913f;stroke-width:2;stroke-dasharray:3 8;opacity:.7}
+            .spark{stroke:#b8913f;stroke-width:3;stroke-linecap:round}
+          </style>
+        </defs>
+        <rect width="${W}" height="${H}" fill="#fffaf0"/>
+        <g class="deco">${deco}</g>
+        <g class="cells">${cells}</g>
+        <g class="inner">${inner}</g>
+        <g class="creatures">${creatures}</g>
+        ${overlays}
+        ${badges}
+      </svg>`,
+      bloomsMarked: [...marks.values()].filter((m) => m === 'B').length,
+    };
+  }
+
+  // ---------- UI chrome ----------
+  const icon = {
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/></svg>',
+    bloom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3c2 0 3 2 2.4 4.2C16.6 6 19 7 19 9.4c0 2-1.9 2.9-3.7 2.6 1.6 1.4 1.6 4-.6 4.8-1.9.7-3-.8-2.7-2.6-.3 1.8-1.4 3.3-3.3 2.6-2.2-.8-2.2-3.4-.6-4.8C6.3 12.3 4.4 11.4 4.4 9.4 4.4 7 6.8 6 9 7.2 8.6 5 10 3 12 3z"/><circle cx="12" cy="10.6" r="1.6" fill="currentColor"/></svg>',
+    green: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z"/><path d="M4 20L14 10M8 12l2 2M11 9l2 2"/></svg>',
+    find: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>',
+    paint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8 8-6-6z"/><path d="M6 12l-2 6 2 2 6-2"/></svg>',
+    eraser: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M15 4l5 5-9 9H6l-3-3z"/><path d="M9 10l5 5M11 18h9"/></svg>',
+    hint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17h6M10 20h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>',
+    flower: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="7" r="3.2"/><circle cx="17" cy="11" r="3.2"/><circle cx="15" cy="17" r="3.2"/><circle cx="9" cy="17" r="3.2"/><circle cx="7" cy="11" r="3.2"/><circle cx="12" cy="12.5" r="1.6" fill="currentColor"/></svg>',
+    bulb: '<svg viewBox="0 0 24 24" fill="none" stroke="#f0d79a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17h6M10 20h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="#f0d79a" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/></svg>',
+  };
+  const chipIcon = {
+    bee: '<svg viewBox="0 0 32 32" fill="#fffaf0" stroke="#1f1d1a" stroke-width="1.6"><ellipse cx="12" cy="10" rx="5" ry="3.2" transform="rotate(-25 12 10)"/><ellipse cx="18" cy="9.5" rx="5" ry="3.2" transform="rotate(20 18 9.5)"/><ellipse cx="15" cy="18" rx="9" ry="6"/><path d="M12 12.5q-1.6 5.5 0 11M17 12.3q-1.6 5.7 0 11.4"/><circle cx="25.5" cy="17" r="3.4"/></svg>',
+    rabbit: '<svg viewBox="0 0 32 32" fill="#fffaf0" stroke="#1f1d1a" stroke-width="1.6"><ellipse cx="13" cy="21" rx="9" ry="7"/><circle cx="22" cy="15" r="5"/><ellipse cx="20.5" cy="6" rx="2" ry="6" transform="rotate(-12 20.5 6)"/><ellipse cx="25" cy="6.5" rx="2" ry="6" transform="rotate(14 25 6.5)"/><circle cx="4" cy="20" r="2.4"/></svg>',
+    fox: '<svg viewBox="0 0 32 32" fill="#fffaf0" stroke="#1f1d1a" stroke-width="1.6" stroke-linejoin="round"><path d="M5 9l3-7 5 5h6l5-5 3 7q-2 12-11 14Q7 21 5 9z"/><path d="M12 14l2 1M20 14l-2 1M15 19h2"/></svg>',
+    unknown: '<svg viewBox="0 0 32 32" fill="none" stroke="#6b655c" stroke-width="1.8" stroke-dasharray="3 3"><circle cx="16" cy="16" r="12"/><text x="16" y="21" font-size="15" text-anchor="middle" fill="#6b655c" stroke="none" font-family="-apple-system,Arial">?</text></svg>',
+  };
+
+  const tools = [['find', 'Find'], ['bloom', 'Bloom'], ['green', 'Green'], ['paint', 'Paint'], ['eraser', 'Eraser'], ['hint', 'Hint']];
+
+  const screens = {
+    find: {
+      tool: 'find', zoom: '200%',
+      chips: [['bee', '1 of 3', false], ['rabbit', '0 of 1', false], ['unknown', '1 hidden', 'hidden']],
+      bubble: `${icon.spark}<span><b>Bee found.</b> Its number counts the blooming flowers it touches.</span>`,
+    },
+    deduce: {
+      tool: 'bloom', zoom: '200%',
+      chips: [['bee', '2 of 3', false], ['rabbit', '1 of 1', true], ['unknown', '1 hidden', 'hidden']],
+      bubble: `${icon.bulb}<span><b>Hint.</b> This bee already has its ${beeB.n} blooms. Its other neighbours are green.</span>`,
+    },
+    paint: {
+      tool: 'paint', zoom: '200%', palette: true,
+      chips: [['bee', '2 of 3', false], ['rabbit', '1 of 1', true], ['fox', '1 of 1', true]],
+      bubble: `${icon.spark}<span><b>Painting revealed a fox.</b> Nothing can bloom within two steps of it.</span>`,
+    },
+  };
+
+  for (const el of document.querySelectorAll('.screen')) {
+    const state = el.dataset.state;
+    const cfg = screens[state];
+    const d = drawing(state);
+    const chips = cfg.chips.map(([k, text, mod]) =>
+      `<div class="chip${mod === true ? ' done' : mod ? ' ' + mod : ''}">${chipIcon[k]}<span>${text}</span></div>`).join('');
+    const palette = cfg.palette ? `<div class="palette">
+        <div class="seg"><span class="on">Flowers</span><span>Leaves</span></div>
+        <div class="swatches">${flowerPal.map((c, i) => `<div class="sw${i === 0 ? ' on' : ''}" style="background:${c}"></div>`).join('')}</div>
+        <button class="auto">Auto</button>
+      </div>` : '';
+    el.innerHTML = `
+      <div class="top">
+        <button class="iconbtn" aria-label="Back">${icon.back}</button>
+        <div class="title">Garden · Page 3</div>
+        <div class="count">${icon.flower}<span>${d.bloomsMarked} / ${totalBlooms}</span></div>
+        <button class="iconbtn" aria-label="Menu">${icon.menu}</button>
+      </div>
+      <div class="canvas">
+        ${d.svg}
+        <div class="zoom">${cfg.zoom}</div>
+        <div class="bubble">${cfg.bubble}</div>
+      </div>
+      ${palette}
+      <div class="tray">${chips}</div>
+      <nav class="tools">${tools.map(([k, label]) => `<button class="tool${k === cfg.tool ? ' on' : ''}">${icon[k]}<span>${label}</span></button>`).join('')}</nav>`;
+  }
+})();
+</script>
+</body>
+</html>

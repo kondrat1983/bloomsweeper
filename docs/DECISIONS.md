@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-10-31: tutorial (FTUE) and Find in SPEC
+
+- **Find in SPEC:** added to SPEC section 6 tools. Decided by Kondrat.
+- **FTUE:** six-shape teaching page with one bee (see `docs/gdd/FTUE.md`, mock-up `mockup/tutorial.html`). Asked for by Kondrat.
+- **When:** shown automatically on first launch, Skip always visible, replay from Settings. Decided by Kondrat.
+- **Rabbit and fox:** rule card on first find plus a simple teaching page for each. Decided by Kondrat.
+- **Mock-up status:** play screen and tutorial mock-ups await Kondrat's OK on iPhone before any UI code.
+
 ## 2026-10-31: answers to open M0 questions
 
 - **Main art reference for the M1 mock-up:** Hidden Folks. The other two are secondary. Decided by Kondrat.
