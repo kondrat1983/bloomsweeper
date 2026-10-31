@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" data-blooms="1"><style>path[data-kind]{fill:#fffaf0;stroke:#1f1d1a;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}</style><defs>
+<pattern id="bloomDots" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#fbe3ea"/><circle cx="8" cy="8" r="3" fill="#d9557a"/></pattern>
+<pattern id="greenHatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="12" height="12" fill="#e4f1dc"/><line x1="0" y1="0" x2="0" y2="12" stroke="#5f9a55" stroke-width="3"/></pattern>
+</defs><style>#c001{fill:url(#greenHatch)}#c002{fill:url(#greenHatch)}#c003{fill:url(#greenHatch)}#c004{fill:url(#greenHatch)}#c005{fill:url(#greenHatch)}#c006{fill:url(#greenHatch)}#c007{fill:url(#greenHatch)}#c008{fill:url(#greenHatch)}#c009{fill:url(#bloomDots)}#c010{fill:url(#greenHatch)}#c011{fill:url(#greenHatch)}#c012{fill:url(#greenHatch)}</style>
+<title>Garden test page (M0 fixture)</title>
+<g id="cells">
+  <path id="c001" data-kind="leaf" d="M 60 60 L 300 60 L 300 300 L 60 300 Z"/>
+  <path id="c002" data-kind="leaf" d="M 304 60 L 544 60 L 544 300 L 304 300 Z"/>
+  <path id="c003" data-kind="leaf" d="M 548 60 L 788 60 L 788 300 L 548 300 Z"/>
+  <path id="c004" data-kind="leaf" d="M 792 60 L 1032 60 L 1032 300 L 792 300 Z"/>
+  <path id="c005" data-kind="leaf" d="M 60 304 L 300 304 L 300 544 L 60 544 Z"/>
+  <path id="c006" data-kind="leaf" d="M 304 304 L 544 304 L 544 544 L 304 544 Z"/>
+  <path id="c007" data-kind="leaf" d="M 548 304 L 788 304 L 788 544 L 548 544 Z"/>
+  <path id="c008" data-kind="leaf" d="M 792 304 L 1032 304 L 1032 544 L 792 544 Z"/>
+  <path id="c009" data-kind="flower" d="M 60 548 L 300 548 L 300 788 L 60 788 Z"/>
+  <path id="c010" data-kind="leaf" d="M 304 548 L 544 548 L 544 788 L 304 788 Z"/>
+  <path id="c011" data-kind="leaf" d="M 548 548 L 788 548 L 788 788 L 548 788 Z"/>
+  <path id="c012" data-kind="leaf" d="M 792 548 L 1032 548 L 1032 788 L 792 788 Z"/>
+</g>
+<g id="deco"></g>
+<g id="creatures">
+  <g id="k01" data-type="rabbit" data-cell="c002"><circle cx="424" cy="180" r="30" fill="none" stroke="#1f1d1a" stroke-width="2"/></g>
+  <g id="k02" data-type="fox" data-cell="c004"><circle cx="912" cy="180" r="30" fill="none" stroke="#1f1d1a" stroke-width="2"/></g>
+  <g id="k03" data-type="bee" data-cell="c006" data-n="1"><circle cx="424" cy="424" r="30" fill="none" stroke="#1f1d1a" stroke-width="2"/></g>
+  <g id="k04" data-type="bee" data-cell="c001" data-n="0" data-reveal="c001,c002,c005"><circle cx="180" cy="180" r="30" fill="none" stroke="#1f1d1a" stroke-width="2"/></g>
+</g>
+</svg>
