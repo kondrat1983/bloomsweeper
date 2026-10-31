@@ -20,4 +20,4 @@ characters. Nothing from them may be traced, copied or used as a placeholder (se
 
 ## Open for Kondrat
 
-- Which of the three should be the main reference for the M1 mock-up? [?]
+- Main reference for the M1 mock-up: Hidden Folks (decided by Kondrat, see DECISIONS).

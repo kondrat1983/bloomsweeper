@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-10-31: answers to open M0 questions
+
+- **Main art reference for the M1 mock-up:** Hidden Folks. The other two are secondary. Decided by Kondrat.
+- **Minimum cell size:** 22 px at page scale (ART_BRIEF section 3), closes DOC-07. Decided by Kondrat.
+- **Difficulty weights:** L1 = 1, L2 = 3, L3 = 5, score = L1 + 3*L2 + 5*L3. Decided by Kondrat.
+- **Find tool:** a separate tool in the panel (in GDD, missing from SPEC section 6). Action: add Find to SPEC section 6, closes DOC-03. Decided by Kondrat.
+- **Bee number:** attribute `data-n` in the SVG, not a field in page.json. Closes DOC-09. Decided by Kondrat.
+
 ## 2026-10-31: M0 tools started
 
 - **Stack:** Node 22 ESM, no npm dependencies. Tests with node:test. Playwright only for PNG previews (preinstalled Chromium). Decided by Kondrat (start M0), implementation by Claude, pending review.
