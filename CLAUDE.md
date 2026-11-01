@@ -16,6 +16,8 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 - No UI code until Kondrat approves the static play-screen mock-up on Pages.
 - Autotests from the first commit of every feature (Node test runner, Playwright). Manual checks in Chrome.
   Manual test cases live in Google Sheets folder "Bloomsweeper QA" (see DECISIONS, 2026-10-31).
+- Every change to docs (GDD, FTUE, ART_BRIEF, REFERENCES, DECISIONS, SPEC) is mirrored to the Google Docs
+  in Drive folder "Bloomsweeper Docs", and the test-case sheet is updated in the same session.
 - Creatures' rules (M1): bee (n of neighbours BLOOM), rabbit (cell and neighbours GREEN), fox
   (no BLOOM within two steps). Confirm in DECISIONS before coding them.
 
@@ -33,6 +35,7 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 Run from the repo root (Node 22, no npm dependencies):
 
 - `npm test`: unit tests (node:test) for geometry, rules, solver, parser, validator.
+- `npm run test:e2e`: Playwright checks of the mock-ups (skips when Playwright is missing; not in CI yet).
 - `npm run validate` or `node tools/validate.mjs <pageDir|all>`: unique solution, staged no-guess solving, sizes, page.json in sync. Exit 1 on failure.
 - `node tools/adjacency.mjs <pageDir>`: writes `page.json` (cells, neighbours, creatures, solution, stages, difficulty).
 - `node tools/preview.mjs <pageDir>`: three states (lines, clues, painted) into `docs/previews/`, plus PNG when Chromium is available.
@@ -41,7 +44,7 @@ Run from the repo root (Node 22, no npm dependencies):
 ## Repo map
 
 - `SPEC.md`: technical spec and milestones (M0 tools, M1 vertical slice).
-- `docs/gdd/GDD.md`: game design. `docs/art/ART_BRIEF.md`: art rules. `docs/art/REFERENCES.md`: mood references (apps, not to copy).
+- `docs/gdd/GDD.md`: game design (v0.2, full). `docs/gdd/FTUE.md`: tutorial. `docs/art/ART_BRIEF.md`: art rules. `docs/art/REFERENCES.md`: mood references (apps, not to copy).
 - `docs/DECISIONS.md`: decisions and open questions answers.
 - `.claude/agents/`: `game-designer`, `puzzle-engineer`, `artist`, `qa-tester`.
 - `.claude/skills/`: `page-format`, `solver`, `release`.
@@ -49,5 +52,6 @@ Run from the repo root (Node 22, no npm dependencies):
 - `src/`: rules (`src/rules/`), solver (`src/solver/`), page loading and validation (`src/page/`), limits.
 - `tools/`: validate, adjacency, preview.
 - `tests/`: unit tests. `pages/garden/test-m0/`: hand-made M0 fixture (not a playable page).
+- `mockup/`: static play-screen and tutorial mock-ups (not game code).
 - `docs/previews/`: generated previews. `docs/qa/`: not created yet.
 - `.github/workflows/ci.yml`: runs unit tests and validates all pages.

@@ -16,8 +16,8 @@ characters. Nothing from them may be traced, copied or used as a placeholder (se
 
 - Creatures camouflage with the same stroke as the cells (ART_BRIEF section 2).
 - Density is high at the edges and calmer near the focal motif (ART_BRIEF section 4).
-- Revealed creatures sit in hatched shading (GDD section 6).
+- Revealed creatures sit in hatched shading (GDD section 4.5).
 
-## Open for Kondrat
+## Decided
 
 - Main reference for the M1 mock-up: Hidden Folks (decided by Kondrat, see DECISIONS).

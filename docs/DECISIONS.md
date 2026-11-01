@@ -2,6 +2,24 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-01: GDD review answers
+
+Review of GDD v0.2 by the `game-designer` agent; Kondrat answered six questions. GDD is now v0.3.
+
+- **M1 teaching pages:** two mini pages of about 15 cells (rabbit, fox), separate from the three main pages. Small main page L1 only; medium and large bring in L2. Decided by Kondrat.
+- **Mark the rest green:** a button when the counter reaches the total or a clue is fully resolved. Provable step, removes busywork. Decided by Kondrat.
+- **Revealed creatures:** found automatically with a sparkle when their cells are painted. Decided by Kondrat.
+- **Tap-guessing:** after 3 blots in a row the message area offers a Hint, no penalty. Decided by Kondrat.
+- **Devices:** all M1 checks on Kondrat's iPhone only. Decided by Kondrat.
+- **Rabbit and fox:** kept as zero clues for M1; after the playtest test a fox ring variant, ship only if the solver shows a new step type. Decided by Kondrat.
+- **Review fixes (text only):** solver checks split into built and pending; L2 is subset only; L3 page total on any page; difficulty score counts cells resolved per level, normalised difficulty proposed [?]; reveal must fire while a cell is undetermined (validator check pending); gap rule proposed [?]; stale cross-references and "proposal" code comments fixed.
+
+## 2026-10-31: full GDD and Google Drive mirror
+
+- **GDD v0.2:** `docs/gdd/GDD.md` rewritten to a full industry-standard structure (overview, audience, USPs, pillars, mechanics, controls, UI flow, FTUE, progression, level design, art, audio, tone, tech, accessibility, monetisation, metrics, scope, risks, open questions, glossary). New [?] items listed in GDD section 19. Asked for by Kondrat.
+- **Drive mirror:** project docs are mirrored as Google Docs in Drive folder "Bloomsweeper Docs"; the repo stays the source of truth. Asked for by Kondrat.
+- **Mock-up autotests:** `npm run test:e2e` (Playwright) checks both mock-ups. Not in CI yet: CI has no browser.
+
 ## 2026-10-31: tutorial (FTUE) and Find in SPEC
 
 - **Find in SPEC:** added to SPEC section 6 tools. Decided by Kondrat.

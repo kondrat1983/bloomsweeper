@@ -2,7 +2,7 @@ import { reachWithin } from './cells.mjs';
 
 export const CREATURE_TYPES = ['bee', 'rabbit', 'fox'];
 
-// Creatures sit on a cell, which is always GREEN (GDD section 5).
+// Creatures sit on a cell, which is always GREEN (GDD section 4.4).
 // Returns the forced GREEN cell and one clue: `bloom` BLOOM cells among `cells`.
 export function creatureRule(creature, adjacency) {
   const { id, type, cell } = creature;
