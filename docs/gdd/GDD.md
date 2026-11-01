@@ -420,7 +420,7 @@ Details in `SPEC.md`.
 - Save edge cases: progress is saved after every mark; reset asks for confirmation; if a page changes
   in an update, its in-progress marks are kept only when the page's cell ids and solution are
   unchanged, otherwise the page restarts and the player is told [?].
-- **Performance targets** [?]: pan and zoom at 60 fps on Kondrat's iPhone and iPad on the large
+- **Performance targets** [?]: pan and zoom at 60 fps on Kondrat's iPhone on the large
   page; page opens in under 1 second after first load.
 
 ---
