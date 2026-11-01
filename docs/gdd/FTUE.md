@@ -9,8 +9,7 @@ game: find a creature, deduce with its clue, mark, paint. No fail state, no time
 
 ## The teaching page
 
-Six shapes. One bee on a leaf touches exactly two flowers and says 2, so both bloom (GDD section 5
-teaching idea). The page total is 2 blooms, so the other four shapes are green. Solvable by L1 and
+Six shapes. One bee on a leaf touches exactly two flowers and says 2, so both bloom (GDD section 7). The page total is 2 blooms, so the other four shapes are green. Solvable by L1 and
 the page total only.
 
 ## Steps
@@ -44,4 +43,4 @@ Skip is always visible and ends the tutorial.
 
 - Shown automatically on first launch. Skip is always visible; replay from Settings.
 - Rabbit and fox: a rule card on first find, and the first page with that creature is a simple
-  teaching page where its rule is the only thing to notice (GDD section 10).
+  teaching page where its rule is the only thing to notice (GDD section 7).

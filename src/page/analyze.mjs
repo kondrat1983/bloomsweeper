@@ -44,7 +44,7 @@ export function analyze(model) {
     error,
     finalStage: stage,
     allDetermined: state.every((v) => v !== UNKNOWN),
-    // proposal: L1 = 1, L2 = 3, L3 = 5 (SPEC section 4 says "weighted"). Weights wait for Kondrat.
+    // Weights L1 = 1, L2 = 3, L3 = 5 (decided). Counts cells resolved per level, so the score grows with size.
     difficulty: { ...counts, score: counts.L1 + 3 * counts.L2 + 5 * counts.L3 },
   };
 }
