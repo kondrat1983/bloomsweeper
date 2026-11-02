@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: phase 2 visual language
+
+- **Approved to proceed:** Kondrat liked the creatures and asked for phase 2.
+- **Delivered (proposal, waiting for Kondrat's review):** tokens (colours, mark specs, five palettes, type, sizes, motion), UI kit (icons, tool states, tray chips, messages, buttons, feedback), and screens: Find, Deduce, Paint, Tutorial, rule cards for rabbit and fox, Page complete, Album, Title. Files in `art/phase2/`.
+- **Wordmark:** Caveat 700 (Google Fonts, OFL) for the logo and album title only; UI text stays the system font at 17 pt or more. Name is still a working title.
+
 ## 2026-11-02: style chosen, first creatures
 
 - **Style:** direction A (clean pen) with the living line of B; ground texture of stipple and short grass dashes. Mood reference Hidden Folks (feel only). Decided by Kondrat.
