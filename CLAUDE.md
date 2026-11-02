@@ -8,12 +8,13 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 - Talk to Kondrat in Russian, briefly. He works mostly from his phone.
 - Test first for anything with rules: adjacency, rule evaluation, solver, validator, save format.
   Test behaviour, not implementation. Fix root causes.
-- Small ordered commits, one feature per PR. Each PR lists what Kondrat must check on iPhone/iPad.
+- Small ordered commits, one feature per branch. Claude merges to `main` itself once unit tests, e2e tests
+  and the validator pass (Kondrat's OK, 2026-11-02), and tells Kondrat what to check on his iPhone.
 - Never ship a page that fails validation (unique solution, staged no-guess solvability, touch sizes).
 - Rules engine lives in `src/rules/` and is shared by app and tools. Never duplicate rule logic.
 - All art and puzzles are original. Do not copy or trace other artists or games, even as placeholders.
 - Public repo: no personal data, no keys.
-- Mock-ups approved (2026-11-02). UI code starts in M1, after the Claude Design art package (see DECISIONS).
+- Mock-ups and the Claude Design art package approved (2026-11-02). M1 UI code is in progress.
 - Autotests from the first commit of every feature (Node test runner, Playwright). Manual checks in Chrome.
   Manual test cases live in Google Sheets folder "Bloomsweeper QA" (see DECISIONS, 2026-10-31).
 - Every change to docs (GDD, FTUE, ART_BRIEF, REFERENCES, CLAUDE_DESIGN_BRIEF, DECISIONS, SPEC) is mirrored to the Google Docs
@@ -35,7 +36,8 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 Run from the repo root (Node 22, no npm dependencies):
 
 - `npm test`: unit tests (node:test) for geometry, rules, solver, parser, validator.
-- `npm run test:e2e`: Playwright checks of the mock-ups (skips when Playwright is missing; not in CI yet).
+- `npm run test:e2e`: Playwright checks of the play screen and the mock-ups (skips when Playwright is missing; not in CI yet).
+- `node tools/serve.mjs [port]`: serve the repo locally; the game is `index.html` (`?page=garden/sample-p3`).
 - `npm run validate` or `node tools/validate.mjs <pageDir|all>`: unique solution, staged no-guess solving, sizes, page.json in sync. Exit 1 on failure.
 - `node tools/adjacency.mjs <pageDir>`: writes `page.json` (cells, neighbours, creatures, solution, stages, difficulty).
 - `node tools/preview.mjs <pageDir>`: three states (lines, clues, painted) into `docs/previews/`, plus PNG when Chromium is available.
@@ -49,6 +51,7 @@ Run from the repo root (Node 22, no npm dependencies):
 - `.claude/agents/`: `game-designer`, `puzzle-engineer`, `artist`, `qa-tester`.
 - `.claude/skills/`: `page-format`, `solver`, `release`.
 - `pages/<chapter>/<id>/`: page.svg, page.json, page.overrides.json (not created yet).
+- `index.html` + `src/app/`: the play screen (M1, no build step). `src/game/`: game state, save, hint (pure, tested).
 - `src/`: rules (`src/rules/`), solver (`src/solver/`), page loading and validation (`src/page/`), limits.
 - `tools/`: validate, adjacency, preview.
 - `tests/`: unit tests. `pages/garden/test-m0/`: hand-made M0 fixture (not a playable page).

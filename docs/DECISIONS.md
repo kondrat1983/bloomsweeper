@@ -2,6 +2,17 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: Claude merges to main
+
+- **Merging:** Claude merges finished branches into `main` itself, after unit tests, e2e tests and the validator pass, and reports what to check on the iPhone. Replaces "Kondrat merges" in SPEC section 0. Decided by Kondrat.
+
+## 2026-11-02: M1 started, play screen v1
+
+- **Merged:** art brief and phases 1 to 3 into `main`. Decided by Kondrat ("merge and start M1").
+- **Play screen v1 (`index.html`, `src/app/`, `src/game/`):** loads `pages/garden/sample-p3`; find, bloom, green, paint (Spring palette, Auto), eraser, hint; instant blots that wash away; hint offer after 3 blots; mark the rest green; paint reveals hidden creatures; long press shows neighbours; autosave in localStorage (schema 1); page complete message. Tests first for state, save and hint; Playwright checks for the screen.
+- **Proposals [?] for Kondrat:** one-finger drag pans with every tool (GDD says Find only), because taps still work and it is easier on a phone; default zoom fits the page width (GDD 5.1).
+- **Not yet in M1:** title, chapters, album screen, settings, tutorial in the app, rule cards, sounds, PWA offline, landscape, teaching pages and the three main pages (needs the M1 generator).
+
 ## 2026-11-02: text size, phase 3 page art
 
 - **Text size:** every text in the game is at least 17 pt, secondary captions included. Phase 2 screens updated. Decided by Kondrat.
