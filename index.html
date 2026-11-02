@@ -7,10 +7,40 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Bloomsweeper</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="src/app/app.css">
 </head>
 <body>
-<main class="app" id="app">
+<section class="screen title-screen" id="screen-title" hidden>
+  <div class="title-art" aria-hidden="true"></div>
+  <div class="wordmark"><h1>Bloomsweeper</h1><p>A coloring book that thinks back</p></div>
+  <nav class="title-menu" aria-label="Main menu">
+    <a class="primary" id="continue" href="#chapter"><b>Continue</b><span id="continueSub">Garden</span></a>
+    <div class="tiles">
+      <a href="#chapter"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="7" r="3.2"/><circle cx="17" cy="11" r="3.2"/><circle cx="15" cy="17" r="3.2"/><circle cx="9" cy="17" r="3.2"/><circle cx="7" cy="11" r="3.2"/><circle cx="12" cy="12.5" r="1.6" fill="currentColor"/></svg>Chapters</a>
+      <a href="#album"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5c3-1.5 6-1.5 9 0v14c-3-1.5-6-1.5-9 0zM21 5.5c-3-1.5-6-1.5-9 0v14c3-1.5 6-1.5 9 0z"/></svg>Album</a>
+      <a href="#settings"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>Settings</a>
+    </div>
+  </nav>
+</section>
+<section class="screen list-screen" id="screen-chapter" hidden>
+  <header class="top"><a class="iconbtn" href="#title" aria-label="Back"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a><h1 class="script">Garden</h1></header>
+  <ol class="pages" id="pageList"></ol>
+</section>
+<section class="screen list-screen" id="screen-album" hidden>
+  <header class="top"><a class="iconbtn" href="#title" aria-label="Back"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a><h1 class="script">My album</h1></header>
+  <div class="album" id="albumGrid"></div>
+</section>
+<section class="screen list-screen" id="screen-settings" hidden>
+  <header class="top"><a class="iconbtn" href="#title" aria-label="Back"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a><h1 class="script">Settings</h1></header>
+  <div class="settings">
+    <a class="row" href="tutorial.html">Replay the tutorial</a>
+    <button class="row danger" id="resetAll">Reset all progress</button>
+    <p class="note">Sound, hints and left-handed mode arrive in a later build.</p>
+  </div>
+</section>
+<div class="modal" id="ruleCard" hidden></div>
+<main class="app" id="app" hidden>
   <header class="top">
     <button class="iconbtn" id="back" aria-label="Back"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div class="title" id="title">Garden</div>

@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: generator, first chapter pages, game screens
+
+- **Generator (`tools/generate.mjs`, `src/gen/`):** five profiles: `teach-rabbit`, `teach-fox` (15 cells, one creature, its reach green, the rest blooms), `small` (60 cells, single-clue steps only), `medium` (150 cells) and `large` (300 cells), which must need at least one subset (L2) step. Every page it writes passes the validator.
+- **Garden pages:** 01 rabbit lesson, 02 fox lesson, 03 small (60 cells, 10 creatures), 04 medium (150 cells, 27 creatures, 2 L2 steps), 05 large (300 cells).
+- **Creature counts above the GDD [?]:** medium allows up to 28 and large up to 50 creatures (GDD: 10 to 18). With the current layouts fewer clues leave cells undetermined. Proposal: accept for M1, revisit with the artist's hand-made layouts.
+- **Screens in the app:** title (Continue, Chapters, Album, Settings), Garden chapter list with progress bars, album of finished pages in the player's colours with PNG export, settings (replay tutorial, reset all progress), rule card the first time a rabbit or fox is found. Routes: `#title`, `#chapter`, `#album`, `#settings`, `#play/<page>`.
+- **Tutorial in the app (`tutorial.html`):** the approved FTUE mock-up. First launch opens it; Let's play (also after Skip) marks it done and opens the rabbit lesson.
+
 ## 2026-11-02: validator checks for M1
 
 - **Reveal must matter:** a creature revealed after every cell is solved, or never revealed, fails validation (VAL-01). The M0 fixture page was rebuilt to pass.

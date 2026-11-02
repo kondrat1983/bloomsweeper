@@ -3,6 +3,7 @@ import { Game } from '../game/state.mjs';
 import { saveGame, loadGame } from '../game/save.mjs';
 import { nextHint } from '../game/hint.mjs';
 import { HIT_R } from '../limits.mjs';
+import { CHAPTERS, ALL_PAGES, pageInfo } from './pages.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const PAGE_W = 1200, PAGE_H = 1600;
@@ -31,15 +32,23 @@ const $ = (id) => document.getElementById(id);
 const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (parent) parent.appendChild(e); return e; };
 const storage = (() => { try { return window.localStorage; } catch { return null; } })();
 
-const params = new URLSearchParams(location.search);
-const PAGE = params.get('page') || 'garden/sample-p3';
+let PAGE = null;
+const KEY = { tutorial: 'bloomsweeper:v1:tutorialDone', last: 'bloomsweeper:v1:last', seen: (t) => `bloomsweeper:v1:seen:${t}` };
+const getFlag = (k) => { try { return storage && storage.getItem(k); } catch { return null; } };
+const setFlag = (k, v = '1') => { try { if (storage) storage.setItem(k, v); } catch { /* blocked */ } };
 
 let game, svg, cellPaths = new Map(), centroids = new Map(), layers = {};
 let tool = 'find', colour = SPRING.flowers[0], paletteTab = 'flowers';
 let msgTimer = null;
 
-async function boot() {
-  const wrap = $('wrap');
+let uiReady = false;
+async function openPage(pageId) {
+  if (PAGE === pageId && game) return;
+  PAGE = pageId;
+  setFlag(KEY.last, pageId);
+  game = null; svg = null; cellPaths = new Map(); centroids = new Map(); layers = {};
+  hush();
+  $('stage').innerHTML = '';
   try {
     const [pageJson, svgText] = await Promise.all([
       fetch(`pages/${PAGE}/page.json`).then((r) => { if (!r.ok) throw new Error(`page.json ${r.status}`); return r.json(); }),
@@ -49,16 +58,112 @@ async function boot() {
     game = new Game(pageJson, saved);
     mountSvg(svgText, pageJson);
   } catch (e) {
-    wrap.innerHTML = `<p class="loading">Could not open this page (${e.message}).</p>`;
+    $('stage').innerHTML = `<p class="loading">Could not open this page (${e.message}).</p>`;
     return;
   }
-  $('title').textContent = PAGE.split('/')[0].replace(/^\w/, (c) => c.toUpperCase());
-  buildPalette();
-  bindTools();
-  setupPanZoom();
+  $('title').textContent = `${CHAPTERS[0].title} · ${pageInfo(PAGE).title}`;
+  if (!uiReady) { buildPalette(); bindTools(); setupPanZoom(); uiReady = true; }
+  view.ready = false; window.dispatchEvent(new Event('resize'));
   setTool('find', true);
   renderAll();
   if (game.isComplete()) showComplete();
+}
+
+// ---------- screens and routing ----------
+const SCREENS = ['title', 'chapter', 'album', 'settings'];
+function show(name) {
+  for (const n of SCREENS) $(`screen-${n}`).hidden = n !== name;
+  $('app').hidden = name !== 'play';
+}
+async function route() {
+  if (!getFlag(KEY.tutorial)) { location.replace('tutorial.html'); return; }
+  const h = decodeURIComponent(location.hash.replace(/^#/, ''));
+  if (h.startsWith('play/')) { show('play'); return openPage(h.slice(5)); }
+  const name = SCREENS.includes(h) ? h : 'title';
+  show(name);
+  if (name === 'title') renderTitle();
+  if (name === 'chapter') renderChapter();
+  if (name === 'album') renderAlbum();
+}
+function renderTitle() {
+  const last = getFlag(KEY.last) || ALL_PAGES[0].id;
+  $('continue').href = `#play/${last}`;
+  $('continueSub').textContent = `${CHAPTERS[0].title} · ${pageInfo(last).title}`;
+}
+const pageCache = new Map();
+const pageJson = (id) => { if (!pageCache.has(id)) pageCache.set(id, fetch(`pages/${id}/page.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)); return pageCache.get(id); };
+function progressOf(id, json) {
+  const saved = storage ? loadGame(storage, id) : null;
+  const marked = saved ? Object.keys(saved.marks || {}).length : 0;
+  const cells = json ? json.cells.length : 0;
+  return { saved, marked, cells, done: cells > 0 && marked === cells };
+}
+async function renderChapter() {
+  const list = $('pageList');
+  list.innerHTML = '';
+  for (const pg of CHAPTERS[0].pages) {
+    const json = await pageJson(pg.id);
+    const pr = progressOf(pg.id, json);
+    const pct = pr.cells ? Math.round((pr.marked / pr.cells) * 100) : 0;
+    const li = document.createElement('li');
+    li.innerHTML = `<a href="#play/${pg.id}"><img src="pages/${pg.id}/page.svg" alt=""><div class="meta"><b>${pg.title}</b><span>${pg.size}${json ? ` · ${json.cells.length} shapes` : ''}${pr.done ? ' · done' : ''}</span><div class="bar" aria-label="${pct}% marked"><i style="width:${pct}%"></i></div></div></a>`;
+    list.appendChild(li);
+  }
+}
+// The album shows finished pages in the player's colours, as SVG built from the page and the save.
+async function paintedSvg(id) {
+  const [text, json] = await Promise.all([fetch(`pages/${id}/page.svg`).then((r) => r.text()), pageJson(id)]);
+  const pr = progressOf(id, json);
+  const rules = Object.entries(pr.saved?.painted || {}).map(([c, col]) => `#${c}{fill:${col}}`).join('');
+  return text.replace(/<svg\b[^>]*>/, (m) => `${m}<style>#cells path{fill:#fffaf0}${rules}</style>`);
+}
+async function renderAlbum() {
+  const grid = $('albumGrid');
+  grid.innerHTML = '';
+  let any = false;
+  for (const pg of ALL_PAGES) {
+    const json = await pageJson(pg.id);
+    if (!progressOf(pg.id, json).done) continue;
+    any = true;
+    const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(await paintedSvg(pg.id))}`;
+    const fig = document.createElement('figure');
+    fig.innerHTML = `<img src="${url}" alt="${pg.title}, painted"><figcaption><b>${pg.title}</b></figcaption><button>Export PNG</button>`;
+    fig.querySelector('button').onclick = () => exportPng(url, pg.id);
+    grid.appendChild(fig);
+  }
+  if (!any) grid.innerHTML = '<p class="empty">Finished pages appear here in your colours.</p>';
+}
+function exportPng(url, id) {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas'); c.width = PAGE_W; c.height = PAGE_H;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fffaf0'; ctx.fillRect(0, 0, PAGE_W, PAGE_H); ctx.drawImage(img, 0, 0, PAGE_W, PAGE_H);
+    c.toBlob((b) => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `bloomsweeper-${id.replace('/', '-')}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); }, 'image/png');
+  };
+  img.src = url;
+}
+function bindScreens() {
+  $('resetAll').onclick = () => {
+    if (!confirm('Reset all progress? Your album will be cleared.')) return;
+    try { for (const pg of ALL_PAGES) { storage.removeItem(`bloomsweeper:v1:page:${pg.id}`); storage.removeItem(`bloomsweeper:v1:album:${pg.id}`); } storage.removeItem(KEY.last); } catch { /* blocked */ }
+    location.hash = '#title';
+  };
+}
+
+// ---------- rule cards (first time a rabbit or fox is found) ----------
+const RULE_CARD = {
+  rabbit: { img: 'assets/creatures/rabbit-pose1.svg', title: 'Rabbit', text: "Rabbits eat flowers. The rabbit's leaf and <b>every shape it touches</b> stay green." },
+  fox: { img: 'assets/creatures/fox-pose1.svg', title: 'Fox', text: 'Foxes keep a shady den. <b>Nothing blooms within two steps</b> of the fox.' },
+};
+function maybeRuleCard(type) {
+  const c = RULE_CARD[type];
+  if (!c || getFlag(KEY.seen(type))) return false;
+  setFlag(KEY.seen(type));
+  const m = $('ruleCard');
+  m.innerHTML = `<section class="card" role="dialog" aria-labelledby="ruleTitle"><div class="kicker">NEW CREATURE</div><img src="${c.img}" alt=""><h2 id="ruleTitle">${c.title}</h2><p>${c.text}</p><button id="ruleOk">Got it</button></section>`;
+  m.hidden = false;
+  $('ruleOk').onclick = () => { m.hidden = true; };
+  return true;
 }
 
 function mountSvg(svgText, page) {
@@ -161,6 +266,7 @@ function hush() { $('msg').classList.remove('show'); }
 function onMessageAction(act) {
   if (act === 'close') return hush();
   if (act === 'hint') return showHint();
+  if (act === 'album') { location.hash = '#album'; return; }
   if (act === 'rest') { const n = game.markRestGreen(); persist(); renderAll(); say(`<b>${n} shapes marked green.</b>`); return afterMark(); }
 }
 
@@ -176,7 +282,7 @@ function onTap(target) {
     const r = game.find(target.creature);
     if (r.ok) {
       persist(); renderAll();
-      say(`<b>${TYPE_NAME[r.creature.type]} found.</b> ${FOUND_TEXT[r.creature.type]}`);
+      if (!maybeRuleCard(r.creature.type)) say(`<b>${TYPE_NAME[r.creature.type]} found.</b> ${FOUND_TEXT[r.creature.type]}`);
     }
     return;
   }
@@ -209,7 +315,7 @@ function afterMark() {
 }
 function showComplete() {
   saveAlbum();
-  say('<b>Page complete.</b> Solved by logic. Now paint it your way: it is saved in your album.', {});
+  say('<b>Page complete.</b> Solved by logic. Paint it your way: it is in your album.', { buttons: [{ act: 'album', label: 'Album' }] });
 }
 function saveAlbum() {
   if (!storage) return;
@@ -242,8 +348,8 @@ function setTool(t, quiet = false) {
 }
 function bindTools() {
   for (const b of document.querySelectorAll('.tool')) b.onclick = () => setTool(b.dataset.tool);
-  $('back').onclick = () => { location.href = 'mockup/'; };
-  $('menu').onclick = () => say('Menu, album and settings arrive in the next build.');
+  $('back').onclick = () => { location.hash = '#chapter'; };
+  $('menu').onclick = () => { location.hash = '#title'; };
 }
 function buildPalette() {
   const draw = () => {
@@ -366,4 +472,6 @@ function setupPanZoom() {
   wrap.addEventListener('wheel', (e) => { e.preventDefault(); const r = wrap.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
 }
 
-boot();
+bindScreens();
+window.addEventListener('hashchange', route);
+route();
