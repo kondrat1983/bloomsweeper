@@ -2,6 +2,11 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: style chosen, first creatures
+
+- **Style:** direction A (clean pen) with the living line of B; ground texture of stipple and short grass dashes. Mood reference Hidden Folks (feel only). Decided by Kondrat.
+- **Creatures v1:** bee (walking, flying), rabbit (sitting, alert), fox (sitting, asleep), decorative moth, revealed fox before and after painting. Warm ink line, white bodies, solid ink accents. Sources in `art/phase1/`. Waiting for Kondrat's feedback.
+
 ## 2026-11-02: mock-up approved, art via Claude Design
 
 - **Mock-ups approved:** Kondrat: "the mock-up looks good". The layout of `mockup/index.html` and `mockup/tutorial.html` is approved; UI code may start in M1. Decided by Kondrat.
