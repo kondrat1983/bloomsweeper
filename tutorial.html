@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fffaf0">
+<title>Bloomsweeper tutorial</title>
+<style>
+  :root {
+    --paper: #fffaf0;
+    --ink: #1f1d1a;
+    --gold: #b8913f;
+    --gold-soft: #f3e6c4;
+    --muted: #6b655c;
+    --line: #e7dfcf;
+    --ui: #fbf5e8;
+    --desk: #ece4d2;
+  }
+  * { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    background: var(--desk);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  .screen {
+    position: relative;
+    max-width: 430px;
+    margin: 0 auto;
+    height: 100svh;
+    min-height: 600px;
+    max-height: 932px;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  @media (min-width: 500px) {
+    body { padding: 24px 0; }
+    .screen { border-radius: 28px; box-shadow: 0 10px 40px rgba(31, 29, 26, .18); max-height: 844px; }
+  }
+  .top {
+    display: flex; align-items: center; gap: 6px;
+    padding: calc(env(safe-area-inset-top) + 6px) 8px 6px 14px;
+    background: var(--ui);
+    border-bottom: 1px solid var(--line);
+  }
+  .title { flex: 1; min-width: 0; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .count {
+    display: flex; align-items: center; gap: 6px;
+    height: 36px; padding: 0 12px;
+    border-radius: 18px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .count svg { width: 18px; height: 18px; }
+  .skip { height: 44px; padding: 0 12px; border: 0; background: none; color: var(--muted); font-size: 17px; }
+  .canvas { position: relative; flex: 1; min-height: 0; background: var(--paper); }
+  .canvas > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; }
+  .card {
+    position: absolute; left: 10px; right: 10px; bottom: 10px;
+    padding: 14px 16px 12px;
+    border-radius: 18px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 17px;
+    line-height: 1.38;
+    box-shadow: 0 6px 20px rgba(31, 29, 26, .25);
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  .card.top-card { bottom: auto; top: 10px; }
+  .card b { color: #f0d79a; }
+  .card .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: #5a554d; }
+  .dots i.on { background: #f0d79a; }
+  .btn {
+    min-height: 44px; padding: 0 18px;
+    border: 0; border-radius: 22px;
+    background: #f0d79a; color: var(--ink);
+    font-size: 17px; font-weight: 600;
+  }
+  .btn.ghost { background: transparent; color: var(--paper); border: 1px solid #5a554d; }
+  .tip { margin-top: 6px; color: #cfc6b5; }
+  .tray {
+    display: flex; gap: 8px;
+    padding: 8px 10px;
+    background: var(--ui);
+    border-top: 1px solid var(--line);
+  }
+  .chip {
+    display: flex; align-items: center; gap: 6px;
+    height: 44px; padding: 0 12px 0 8px;
+    border-radius: 22px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-size: 17px;
+    white-space: nowrap;
+  }
+  .chip svg { width: 28px; height: 28px; }
+  .chip.done { border-color: var(--gold); background: var(--gold-soft); }
+  .palette {
+    display: none; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    background: var(--ui);
+    border-top: 1px solid var(--line);
+  }
+  .palette.show { display: flex; }
+  .swatches { display: flex; gap: 8px; flex: 1; }
+  .sw { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--line); padding: 0; }
+  .sw.on { box-shadow: 0 0 0 2px var(--ink); }
+  .auto { height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); font-size: 17px; color: var(--ink); }
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    padding: 4px 4px calc(env(safe-area-inset-bottom) + 6px);
+    background: var(--ui);
+    border-top: 1px solid var(--line);
+  }
+  .tool {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-height: 58px;
+    border: 0; background: none; color: var(--ink);
+    border-radius: 14px;
+    font-size: 17px;
+    letter-spacing: -0.3px;
+    transition: opacity .2s;
+  }
+  .tool svg { width: 26px; height: 26px; }
+  .tool.on { background: var(--gold-soft); box-shadow: inset 0 -3px 0 var(--gold); }
+  .tool.off { opacity: .35; }
+  .target { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(184, 145, 63, .0), inset 0 0 0 2px var(--gold); }
+    50% { box-shadow: 0 0 0 8px rgba(184, 145, 63, .28), inset 0 0 0 2px var(--gold); }
+  }
+  svg .glow { fill: none; stroke: #b8913f; stroke-width: 5; stroke-linejoin: round; animation: glow 1.3s ease-in-out infinite; pointer-events: none; }
+  @keyframes glow { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+  svg .ring { fill: none; stroke: #b8913f; stroke-width: 3; animation: ring 1.4s ease-out infinite; transform-box: fill-box; transform-origin: center; pointer-events: none; }
+  @keyframes ring { from { transform: scale(.6); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+  .shake { animation: shake .35s; }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .newcard { margin-top: 10px; display: flex; gap: 12px; align-items: center; background: #2c2925; border-radius: 14px; padding: 10px; }
+  .newcard svg { flex: none; width: 96px; height: 96px; background: var(--paper); border-radius: 10px; }
+  @media (prefers-reduced-motion: reduce) {
+    .target, svg .glow, svg .ring, .shake { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="screen" id="app">
+  <div class="top">
+    <div class="title">First page · Tutorial</div>
+    <div class="count" id="count"></div>
+    <button class="skip" id="skip">Skip</button>
+  </div>
+  <div class="canvas" id="canvas">
+    <svg id="field" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid meet" aria-label="Tutorial page"></svg>
+    <div class="card" id="card"></div>
+  </div>
+  <div class="palette" id="palette">
+    <div class="swatches" id="swatches"></div>
+    <button class="auto" id="auto">Auto</button>
+  </div>
+  <div class="tray"><div class="chip" id="beechip"></div></div>
+  <nav class="tools" id="tools"></nav>
+</main>
+
+<script>
+// Mock-up only: a scripted walk-through of the first-time experience, not game code.
+(function () {
+  const f = (n) => (Math.round(n * 10) / 10).toString();
+  function smooth(pts) {
+    const n = pts.length;
+    const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const m = mid(pts[n - 1], pts[0]);
+    let d = `M${f(m[0])} ${f(m[1])}`;
+    for (let i = 0; i < n; i++) {
+      const p = pts[i], q = mid(pts[i], pts[(i + 1) % n]);
+      d += `Q${f(p[0])} ${f(p[1])} ${f(q[0])} ${f(q[1])}`;
+    }
+    return d + 'Z';
+  }
+  function flower(c) {
+    const pts = [];
+    for (let i = 0; i < 120; i++) {
+      const t = (i / 120) * Math.PI * 2;
+      const k = c.type === 'five' ? 0.58 + 0.42 * Math.pow(Math.abs(Math.cos(2.5 * (t + c.rot))), 0.7)
+        : 0.86 + 0.14 * Math.pow(Math.abs(Math.cos(4 * (t + c.rot))), 0.8);
+      pts.push([c.x + c.r * k * Math.cos(t), c.y + c.r * k * Math.sin(t)]);
+    }
+    return smooth(pts);
+  }
+  function leaf(c) {
+    const L = c.r, w = c.r * 0.5, N = 30, top = [], bot = [];
+    for (let i = 0; i <= N; i++) {
+      const t = (i / N) * Math.PI, hw = w * Math.pow(Math.sin(t), 0.85), x = -L + (2 * L * i) / N;
+      top.push([x, -hw]);
+      bot.push([x, hw]);
+    }
+    const cs = Math.cos(c.rot), sn = Math.sin(c.rot);
+    return smooth(top.concat(bot.slice(1, -1).reverse()).map(([x, y]) => [c.x + x * cs - y * sn, c.y + x * sn + y * cs]));
+  }
+  function inner(c) {
+    if (c.kind === 'leaf') {
+      const cs = Math.cos(c.rot), sn = Math.sin(c.rot), L = c.r * 0.9;
+      return `<path d="M${f(c.x - L * cs)} ${f(c.y - L * sn)}L${f(c.x + L * cs)} ${f(c.y + L * sn)}"/>`;
+    }
+    let s = `<circle cx="${c.x}" cy="${c.y}" r="${f(c.r * 0.22)}"/>`;
+    if (c.type === 'rosette') s += `<circle cx="${c.x}" cy="${c.y}" r="${f(c.r * 0.5)}"/>`;
+    return s;
+  }
+
+  // The teaching page: one bee touching exactly two flowers (GDD section 5 teaching idea).
+  // Page total is 2 blooms, so every other shape is green.
+  const cells = [
+    { id: 'a', kind: 'flower', type: 'rosette', x: 103, y: 300, r: 50, rot: 0.2, bloom: true },
+    { id: 'b', kind: 'leaf', x: 200, y: 300, r: 50, rot: 0, bloom: false },
+    { id: 'c', kind: 'flower', type: 'rosette', x: 297, y: 300, r: 50, rot: 0.5, bloom: true },
+    { id: 'd', kind: 'flower', type: 'five', x: 200, y: 168, r: 50, rot: 0.3, bloom: false },
+    { id: 'e', kind: 'leaf', x: 112, y: 438, r: 50, rot: 0.55, bloom: false },
+    { id: 'g', kind: 'leaf', x: 288, y: 438, r: 50, rot: -0.55, bloom: false },
+  ];
+  const byId = Object.fromEntries(cells.map((c) => [c.id, c]));
+  const pathOf = (c) => (c.kind === 'leaf' ? leaf(c) : flower(c));
+  const beeNeighbours = ['a', 'c'];
+  const TOTAL = 2;
+  const flowerPal = ['#f2a7b8', '#f6c27a', '#c7a8e0', '#9cc7ec'];
+  const leafPal = ['#a9cf94', '#7fb17a', '#c9dc9a'];
+
+  const deco = (() => {
+    let s = '';
+    const curls = [[60, 170], [345, 175], [45, 520], [355, 525], [200, 545], [200, 70], [70, 80], [330, 80]];
+    for (const [x, y] of curls) {
+      let d = '';
+      for (let i = 0; i <= 24; i++) {
+        const t = (i / 24) * 3.2 * Math.PI, rr = 12 * (1 - i / 24) + 1;
+        d += `${i ? 'L' : 'M'}${f(x + rr * Math.cos(t))} ${f(y + rr * Math.sin(t))}`;
+      }
+      s += `<path d="${d}"/>`;
+    }
+    const dots = [[150, 215], [250, 215], [150, 380], [250, 380], [30, 300], [370, 300], [120, 110], [280, 110], [200, 505], [90, 600 - 120], [310, 480]];
+    for (const [x, y] of dots) s += `<circle cx="${x}" cy="${y}" r="2.6"/><circle cx="${x + 7}" cy="${y + 4}" r="2.6"/><circle cx="${x + 1}" cy="${y + 9}" r="2.6"/>`;
+    return s;
+  })();
+
+  const icon = {
+    find: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>',
+    bloom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3c2 0 3 2 2.4 4.2C16.6 6 19 7 19 9.4c0 2-1.9 2.9-3.7 2.6 1.6 1.4 1.6 4-.6 4.8-1.9.7-3-.8-2.7-2.6-.3 1.8-1.4 3.3-3.3 2.6-2.2-.8-2.2-3.4-.6-4.8C6.3 12.3 4.4 11.4 4.4 9.4 4.4 7 6.8 6 9 7.2 8.6 5 10 3 12 3z"/><circle cx="12" cy="10.6" r="1.6" fill="currentColor"/></svg>',
+    green: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z"/><path d="M4 20L14 10M8 12l2 2M11 9l2 2"/></svg>',
+    paint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8 8-6-6z"/><path d="M6 12l-2 6 2 2 6-2"/></svg>',
+    eraser: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M15 4l5 5-9 9H6l-3-3z"/><path d="M9 10l5 5M11 18h9"/></svg>',
+    hint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17h6M10 20h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>',
+    flower: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="7" r="3.2"/><circle cx="17" cy="11" r="3.2"/><circle cx="15" cy="17" r="3.2"/><circle cx="9" cy="17" r="3.2"/><circle cx="7" cy="11" r="3.2"/><circle cx="12" cy="12.5" r="1.6" fill="currentColor"/></svg>',
+    bee: '<svg viewBox="0 0 32 32" fill="#fffaf0" stroke="#1f1d1a" stroke-width="1.6"><ellipse cx="12" cy="10" rx="5" ry="3.2" transform="rotate(-25 12 10)"/><ellipse cx="18" cy="9.5" rx="5" ry="3.2" transform="rotate(20 18 9.5)"/><ellipse cx="15" cy="18" rx="9" ry="6"/><path d="M12 12.5q-1.6 5.5 0 11M17 12.3q-1.6 5.7 0 11.4"/><circle cx="25.5" cy="17" r="3.4"/></svg>',
+  };
+  const TOOLS = [['find', 'Find'], ['bloom', 'Bloom'], ['green', 'Green'], ['paint', 'Paint'], ['eraser', 'Eraser'], ['hint', 'Hint']];
+
+  // ---------- state ----------
+  const S = {
+    step: 0, tool: 'find', found: false,
+    marks: {}, painted: {}, blot: null, colour: flowerPal[0], wrongOnce: false,
+  };
+
+  const STEPS = [
+    { // 0
+      text: '<b>Welcome to Bloomsweeper.</b> Every page hides little creatures. Each one tells you which flowers are in bloom.',
+      button: 'Start', tools: [],
+    },
+    { // 1
+      text: '<b>Find the bee</b> hiding on a leaf. Tap it.',
+      tip: 'Look for stripes and wings.', tools: ['find'], cardTop: true, ring: 'bee',
+    },
+    { // 2
+      text: 'The bee says <b>2</b>: exactly 2 of the shapes it touches are in bloom. It touches only these two flowers.',
+      tip: 'Long press any shape to see what it touches.', button: 'Got it', glow: beeNeighbours, tools: [], cardTop: true,
+    },
+    { // 3
+      text: 'So <b>both must bloom</b>. Pick the Bloom tool.', target: 'bloom', glow: beeNeighbours, tools: ['bloom'], cardTop: true,
+    },
+    { // 4
+      text: '<b>Tap the two glowing flowers.</b>', glow: beeNeighbours, tools: ['bloom'], cardTop: true,
+    },
+    { // 5
+      text: 'This page has <b>2 blooms</b> (top right) and you found both. <b>Everything else is green.</b> Pick the Green tool.',
+      target: 'green', countTarget: true, tools: ['green'], cardTop: true,
+    },
+    { // 6
+      text: '<b>Tap the other 4 shapes.</b> The bee\'s leaf counts too: creatures always sit on green.',
+      glowGreen: true, tools: ['green'], cardTop: true,
+    },
+    { // 7
+      text: '<b>Solved by logic, no guessing.</b> Now make the page yours. Pick Paint.', target: 'paint', tools: ['paint'], cardTop: true,
+    },
+    { // 8
+      text: '<b>Choose a colour and tap a shape.</b> Or tap Auto to paint the rest.', tools: ['paint'], palette: true, cardTop: true,
+    },
+    { // 9
+      text: '<b>Page complete!</b> It goes to your album. Some creatures only appear once you paint around them.',
+      button: 'Next', tools: [], palette: true,
+    },
+    { // 10
+      text: 'Other creatures explain themselves the first time you find one:',
+      newcard: true, button: "Let's play", ghost: 'Replay', tools: [],
+    },
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const field = $('field');
+
+  function blotPath(x, y) {
+    const pts = [];
+    for (let i = 0; i < 18; i++) {
+      const t = (i / 18) * Math.PI * 2, r = 16 * (1 + 0.28 * Math.sin(3 * t + 0.4) + 0.16 * Math.sin(7 * t + 1.3));
+      pts.push([x + r * Math.cos(t), y + r * Math.sin(t)]);
+    }
+    return smooth(pts);
+  }
+
+  function drawField() {
+    const st = STEPS[S.step];
+    let cellSvg = '';
+    for (const c of cells) {
+      let fill = '#fffaf0';
+      if (S.painted[c.id]) fill = S.painted[c.id];
+      else if (S.marks[c.id] === 'B') fill = 'url(#bloomDots)';
+      else if (S.marks[c.id] === 'G') fill = 'url(#greenHatch)';
+      cellSvg += `<path d="${pathOf(c)}" fill="${fill}" data-id="${c.id}"/>`;
+    }
+    const innerSvg = cells.map(inner).join('');
+    let glow = '';
+    const glowIds = st.glow ? st.glow.filter((id) => !S.marks[id]) : st.glowGreen ? cells.filter((c) => !c.bloom && !S.marks[c.id]).map((c) => c.id) : [];
+    for (const id of glowIds) glow += `<path class="glow" d="${pathOf(byId[id])}"/>`;
+    const b = byId.b;
+    const bee = `<g class="bee" data-id="bee" transform="translate(${b.x} ${b.y - 2}) scale(1.25)">
+      <circle class="hit" r="26"/>
+      <ellipse cx="-7" cy="-9" rx="7" ry="4.5" transform="rotate(-25 -7 -9)"/>
+      <ellipse cx="3" cy="-10" rx="7" ry="4.5" transform="rotate(20 3 -10)"/>
+      <ellipse cx="0" cy="0" rx="12" ry="7.5"/>
+      <path d="M-4 -7Q-6 0 -4 7M2 -7.4Q0 0 2 7.4"/>
+      <circle cx="14" cy="0" r="4.5"/>
+    </g>`;
+    let badge = '';
+    if (S.found) {
+      let d = '';
+      for (let k = 0; k < 6; k++) {
+        const t = (k * Math.PI) / 3 + Math.PI / 6;
+        d += `${k ? 'L' : 'M'}${f(b.x + 22 * Math.cos(t))} ${f(b.y - 52 + 22 * Math.sin(t))}`;
+      }
+      badge = `<g class="badge" pointer-events="none"><path d="${d}Z"/><text x="${b.x}" y="${b.y - 51}">2</text></g>`;
+    }
+    const ring = st.ring === 'bee' ? `<circle class="ring" cx="${b.x}" cy="${b.y}" r="36"/>` : '';
+    const blot = S.blot ? `<g class="blot" pointer-events="none"><path d="${blotPath(byId[S.blot].x, byId[S.blot].y)}"/><circle cx="${byId[S.blot].x + 24}" cy="${byId[S.blot].y - 10}" r="3"/></g>` : '';
+    field.innerHTML = `
+      <defs>
+        <pattern id="bloomDots" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fbe1e7"/><circle cx="5" cy="5" r="2.1" fill="#c9506f"/></pattern>
+        <pattern id="greenHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#e3efd8"/><line x1="0" y1="0" x2="0" y2="7" stroke="#6f9b5f" stroke-width="1.7"/></pattern>
+        <style>
+          .deco path,.deco circle{fill:none;stroke:#1f1d1a;stroke-width:1.1;stroke-linecap:round}
+          .cells path{stroke:#1f1d1a;stroke-width:1.8;stroke-linejoin:round;cursor:pointer}
+          .inner path,.inner circle{fill:none;stroke:#1f1d1a;stroke-width:1;pointer-events:none}
+          .bee ellipse,.bee path,.bee circle{fill:#fffaf0;stroke:#1f1d1a;stroke-width:1.5;stroke-linecap:round}
+          .bee{cursor:pointer}
+          .bee .hit{fill:transparent;stroke:none}
+          .badge path{fill:#f3e6c4;stroke:#b8913f;stroke-width:2.5}
+          .badge text{font:700 26px -apple-system,BlinkMacSystemFont,Arial,sans-serif;fill:#1f1d1a;text-anchor:middle;dominant-baseline:central}
+          .blot path,.blot circle{fill:#1f1d1a;opacity:.86}
+        </style>
+      </defs>
+      <g class="deco">${deco}</g>
+      <g class="cells">${cellSvg}</g>
+      <g class="inner">${innerSvg}</g>
+      ${glow}${bee}${ring}${badge}${blot}`;
+  }
+
+  function drawChrome() {
+    const st = STEPS[S.step];
+    const blooms = Object.values(S.marks).filter((m) => m === 'B').length;
+    const count = $('count');
+    count.innerHTML = `${icon.flower}<span>${blooms} / ${TOTAL}</span>`;
+    count.classList.toggle('target', !!st.countTarget);
+    $('beechip').innerHTML = `${icon.bee}<span>${S.found ? '1' : '0'} of 1</span>`;
+    $('beechip').classList.toggle('done', S.found);
+    $('tools').innerHTML = TOOLS.map(([k, label]) => {
+      const cls = ['tool'];
+      if (k === S.tool) cls.push('on');
+      if (!st.tools.includes(k)) cls.push('off');
+      if (st.target === k) cls.push('target');
+      return `<button class="${cls.join(' ')}" data-tool="${k}">${icon[k]}<span>${label}</span></button>`;
+    }).join('');
+    const pal = $('palette');
+    pal.classList.toggle('show', !!st.palette);
+    $('swatches').innerHTML = flowerPal.map((c) => `<button class="sw${c === S.colour ? ' on' : ''}" style="background:${c}" data-colour="${c}" aria-label="colour"></button>`).join('');
+    const card = $('card');
+    card.classList.toggle('top-card', !!st.cardTop);
+    const dots = STEPS.map((_, i) => `<i class="${i === S.step ? 'on' : ''}"></i>`).join('');
+    const newcard = st.newcard ? `<div class="newcard">
+        <svg viewBox="0 0 100 100"><g fill="#e3efd8" stroke="#1f1d1a" stroke-width="1.6"><circle cx="50" cy="50" r="16"/><circle cx="18" cy="50" r="12"/><circle cx="82" cy="50" r="12"/><circle cx="50" cy="18" r="12"/><circle cx="50" cy="82" r="12"/></g>
+        <g fill="#fffaf0" stroke="#1f1d1a" stroke-width="1.4"><ellipse cx="48" cy="54" rx="9" ry="7"/><circle cx="56" cy="47" r="5"/><ellipse cx="54" cy="37" rx="2" ry="6"/><ellipse cx="59" cy="38" rx="2" ry="6"/></g></svg>
+        <div><b>Rabbit.</b> Rabbits eat flowers: the rabbit's shape and every shape it touches is green.</div>
+      </div>` : '';
+    card.innerHTML = `<div>${st.text}</div>${st.tip ? `<div class="tip">${st.tip}</div>` : ''}${newcard}
+      <div class="row"><div class="dots">${st.newcard ? '' : dots}</div><div style="display:flex;gap:8px">${st.ghost ? `<button class="btn ghost" data-act="replay">${st.ghost}</button>` : ''}${st.button ? `<button class="btn" data-act="next">${st.button}</button>` : ''}</div></div>`;
+  }
+
+  function render() {
+    field.setAttribute('viewBox', STEPS[S.step].cardTop ? '0 -230 400 800' : '0 40 400 800');
+    drawField();
+    drawChrome();
+  }
+  function go(step) { S.step = step; render(); }
+  function nudge() {
+    const card = $('card');
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+  }
+
+  function tapCell(id) {
+    const st = S.step;
+    if (st === 1) { if (id === 'bee') { S.found = true; S.marks.b = undefined; return go(2); } return nudge(); }
+    if (id === 'bee') id = 'b';
+    const c = byId[id];
+    if (st === 4) {
+      if (beeNeighbours.includes(id)) {
+        S.marks[id] = 'B';
+        S.blot = null;
+        if (beeNeighbours.every((n) => S.marks[n] === 'B')) return go(5);
+        return render();
+      }
+      // a wrong mark leaves a blot and the cell stays unknown
+      S.blot = id;
+      STEPS[4].text = '<b>An ink blot.</b> That shape doesn\'t touch the bee, so it can\'t be one of its blooms. No penalty: tap a glowing flower and the blot washes away.';
+      return render();
+    }
+    if (st === 6) {
+      if (!c.bloom) {
+        S.marks[id] = 'G';
+        if (cells.filter((x) => !x.bloom).every((x) => S.marks[x.id] === 'G')) return go(7);
+        return render();
+      }
+      return nudge();
+    }
+    if (st === 8) {
+      S.painted[id] = c.bloom ? S.colour : leafPal[Object.keys(S.painted).length % leafPal.length];
+      if (cells.every((x) => S.painted[x.id])) return go(9);
+      return render();
+    }
+    nudge();
+  }
+
+  field.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-id]');
+    if (el) tapCell(el.dataset.id);
+  });
+  $('tools').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tool]');
+    if (!b) return;
+    const k = b.dataset.tool;
+    const st = STEPS[S.step];
+    if (st.target === k) { S.tool = k; return go(S.step + 1); }
+    if (st.tools.includes(k)) { S.tool = k; return render(); }
+    nudge();
+  });
+  $('swatches').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-colour]');
+    if (b) { S.colour = b.dataset.colour; render(); }
+  });
+  $('auto').addEventListener('click', () => {
+    if (S.step !== 8) return;
+    let fi = 0, li = 0;
+    for (const c of cells) if (!S.painted[c.id]) S.painted[c.id] = c.bloom ? flowerPal[fi++ % flowerPal.length] : leafPal[li++ % leafPal.length];
+    go(9);
+  });
+  $('card').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    if (b.dataset.act === 'replay') return reset();
+    if (S.step < STEPS.length - 1) go(S.step + 1);
+    else finish();
+  });
+  $('skip').addEventListener('click', () => {
+    S.found = true;
+    for (const c of cells) S.marks[c.id] = c.bloom ? 'B' : 'G';
+    go(STEPS.length - 1);
+  });
+  // Finishing (or skipping to the end and pressing Let's play) marks the tutorial done and opens the first page.
+  function finish() {
+    try { localStorage.setItem('bloomsweeper:v1:tutorialDone', '1'); } catch { /* private mode */ }
+    location.href = 'index.html#play/garden/01-rabbit';
+  }
+  const firstText = STEPS[4].text;
+  function reset() {
+    Object.assign(S, { step: 0, tool: 'find', found: false, marks: {}, painted: {}, blot: null, colour: flowerPal[0] });
+    STEPS[4].text = firstText;
+    render();
+  }
+  render();
+})();
+</script>
+</body>
+</html>

@@ -150,21 +150,44 @@ export function narrowestWidth(poly) {
   return 2 * best.r;
 }
 
+// Chunks of up to 16 edges with their bounding boxes, cached per polygon (for fast distance).
+const CHUNK = 16;
+const chunkCache = new WeakMap();
+function chunksOf(P) {
+  let c = chunkCache.get(P);
+  if (c) return c;
+  c = [];
+  for (let s = 0; s < P.length; s += CHUNK) {
+    const e = Math.min(P.length, s + CHUNK);
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (let i = s; i <= e; i++) { const p = P[i % P.length]; if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; }
+    c.push({ s, e, x0, y0, x1, y1 });
+  }
+  chunkCache.set(P, c);
+  return c;
+}
+const boxGap = (a, b) => Math.hypot(Math.max(0, a.x0 - b.x1, b.x0 - a.x1), Math.max(0, a.y0 - b.y1, b.y0 - a.y1));
+
 // Smallest distance between the outlines of two polygons. 0 when they overlap or one contains the other.
+// Exact: only skips pairs of edge chunks whose boxes are farther apart than the best distance found.
 export function distance(A, B) {
-  for (let i = 0; i < A.length; i++) {
-    const a1 = A[i], a2 = A[(i + 1) % A.length];
-    for (let j = 0; j < B.length; j++) {
-      if (properCross(a1, a2, B[j], B[(j + 1) % B.length])) return 0;
+  const CA = chunksOf(A), CB = chunksOf(B);
+  const pairs = [];
+  for (const a of CA) for (const b of CB) pairs.push([boxGap(a, b), a, b]);
+  pairs.sort((p, q) => p[0] - q[0]);
+  let best = Infinity;
+  for (const [g, ca, cb] of pairs) {
+    if (g > best) break;
+    for (let i = ca.s; i < ca.e; i++) {
+      const a1 = A[i], a2 = A[(i + 1) % A.length];
+      for (let j = cb.s; j < cb.e; j++) {
+        const b1 = B[j], b2 = B[(j + 1) % B.length];
+        if (g === 0 && properCross(a1, a2, b1, b2)) return 0;
+        const d = Math.min(pointSegment(a1, b1, b2), pointSegment(b1, a1, a2));
+        if (d < best) best = d;
+      }
     }
   }
   if (insidePolygon(A[0], B) || insidePolygon(B[0], A)) return 0;
-  let best = Infinity;
-  for (const p of A) {
-    for (let j = 0; j < B.length; j++) best = Math.min(best, pointSegment(p, B[j], B[(j + 1) % B.length]));
-  }
-  for (const q of B) {
-    for (let i = 0; i < A.length; i++) best = Math.min(best, pointSegment(q, A[i], A[(i + 1) % A.length]));
-  }
   return best;
 }

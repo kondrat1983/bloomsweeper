@@ -54,3 +54,42 @@ button { font: inherit; color: inherit; }
   .msg.show { animation: rise .25s ease; }
   @keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
 }
+
+/* ---------- screens ---------- */
+[hidden] { display: none !important; }
+.screen { height: 100dvh; max-width: 600px; margin: 0 auto; background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+.script { font-family: 'Caveat', cursive; font-size: 30px; font-weight: 700; flex: 1; }
+a { color: inherit; text-decoration: none; }
+.title-screen { position: relative; }
+.title-art { position: absolute; inset: 0; background: url('../../pages/garden/03-small/page.svg') center / cover no-repeat; opacity: .5; }
+.wordmark { position: relative; margin: calc(env(safe-area-inset-top) + 80px) auto 0; text-align: center; }
+.wordmark h1 { display: inline-block; padding: 8px 26px 4px; background: var(--paper); border-radius: 28px; box-shadow: 0 0 0 10px rgba(255, 250, 240, .85); font-family: 'Caveat', cursive; font-size: 66px; line-height: 1; }
+.wordmark p { display: inline-block; margin-top: 14px; padding: 4px 14px; background: var(--paper); border-radius: 14px; color: #4a453e; }
+.title-menu { position: absolute; left: 24px; right: 24px; bottom: calc(env(safe-area-inset-bottom) + 40px); display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 24px; background: var(--paper); box-shadow: 0 10px 30px rgba(31, 29, 26, .16); }
+.title-menu .primary { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; border-radius: 32px; background: var(--pale-gold); }
+.title-menu .primary span { color: #4a453e; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.tiles a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 72px; border: 1px solid var(--line); border-radius: 18px; }
+.list-screen .top { position: sticky; top: 0; }
+.pages { list-style: none; padding: 12px 14px 32px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+.pages a { display: flex; align-items: center; gap: 14px; padding: 10px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); }
+.pages img { width: 72px; height: 96px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+.pages .meta { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.pages .meta span { color: var(--muted); }
+.bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--gold); }
+.album { padding: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; overflow-y: auto; }
+.album figure { display: flex; flex-direction: column; gap: 6px; }
+.album img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border: 6px solid var(--paper); border-radius: 6px; box-shadow: 0 1px 0 var(--line), 0 6px 14px rgba(31, 29, 26, .12); background: #fff; }
+.album button { min-height: 44px; border: 1px solid var(--ink); border-radius: 22px; background: none; font-weight: 600; }
+.album .empty { grid-column: 1 / -1; color: var(--muted); padding: 24px 4px; }
+.settings { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.settings .row { display: flex; align-items: center; min-height: 52px; padding: 0 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); text-align: left; }
+.settings .danger { color: #9b2c2c; }
+.settings .note { color: var(--muted); }
+.modal { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(31, 29, 26, .5); }
+.modal .card { width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 22px; border-radius: 22px; background: var(--paper); text-align: center; box-shadow: 0 16px 40px rgba(31, 29, 26, .35); }
+.modal .kicker { font-weight: 600; letter-spacing: 1.2px; color: #8a6a28; }
+.modal h2 { font-size: 28px; }
+.modal img { width: 140px; height: 140px; object-fit: contain; }
+.modal button { align-self: stretch; min-height: 48px; border: 0; border-radius: 24px; background: var(--pale-gold); font-weight: 600; }
