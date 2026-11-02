@@ -6,3 +6,5 @@ export const HIT_R = 34;
 // Gap rule (GDD 4.2, proposal): touching cells at most 3 px apart, others at least 12 px. Warning only.
 export const GAP_TOUCH_MAX = 3;
 export const GAP_APART_MIN = 12;
+// Main pages need at least this share of BLOOM cells (generator gate; tests/pages.test.mjs).
+export const MIN_BLOOM_SHARE = 0.1;

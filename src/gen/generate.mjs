@@ -12,7 +12,7 @@ import { analyze } from '../page/analyze.mjs';
 import { loadPage } from '../page/model.mjs';
 import { buildPageJson } from '../page/pagejson.mjs';
 import { validatePage } from '../page/validate.mjs';
-import { HIT_R } from '../limits.mjs';
+import { HIT_R, MIN_BLOOM_SHARE } from '../limits.mjs';
 import { creatureGroup, creatures as CREATURE_ART, INK, PAPER } from './creature-art.mjs';
 
 export const PROFILES = {
@@ -20,7 +20,7 @@ export const PROFILES = {
   'teach-fox': { cells: 15, flowerR: [120, 160], leafR: [130, 170], focalR: 0, mode: 'teach', teach: 'fox', reveal: false, maxCreatures: 4 },
   small: { cells: 60, flowerR: [62, 98], leafR: [70, 98], focalR: 140, mode: 'l1', reveal: true, maxCreatures: 12 },
   medium: { dense: true, cells: 150, flowerR: [42, 62], leafR: [48, 64], focalR: 96, mode: 'mixed', reveal: true, needL2: true, maxCreatures: 28 },
-  large: { dense: true, cells: 300, flowerR: [30, 44], leafR: [36, 46], focalR: 70, mode: 'mixed', reveal: true, needL2: true, maxCreatures: 50 },
+  large: { dense: true, cells: 250, flowerR: [34, 50], leafR: [40, 52], focalR: 80, mode: 'mixed', reveal: true, needL2: true, maxCreatures: 50 },
 };
 
 const W = 1200, H = 1600;
@@ -192,6 +192,7 @@ function puzzle(P, R, items, adj) {
     let changed = 0;
     r0.state.forEach((v, i) => { if (v === UNKNOWN && items[i].bloom) { items[i].bloom = false; changed++; } });
     if (!changed || repair >= 12) return { fail: `clues leave ${unknown(r0.state)} cells open` };
+    if (items.filter((it) => it.bloom).length < MIN_BLOOM_SHARE * n) return { fail: 'too few blooms' };
   }
   // prune bees that are not needed; keep the teaching creature, the rabbit and the fox
   // Try several removal orders; keep the set with the most L2 steps, then the fewest creatures.
@@ -226,6 +227,7 @@ function puzzle(P, R, items, adj) {
   if (a.error || !a.allDetermined) return { fail: 'staged solve failed' };
   if (P.needL2 && a.difficulty.L2 === 0) return { fail: 'no L2 step' };
   if (chosen.length > P.maxCreatures) return { fail: `${chosen.length} creatures` };
+  if (P.mode !== 'teach' && total < MIN_BLOOM_SHARE * n) return { fail: 'too few blooms' };
   return { chosen, total, analysis: a };
 }
 
