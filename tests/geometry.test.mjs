@@ -17,9 +17,9 @@ test('H and V commands are supported', () => {
   assert.equal(area(p), 100);
 });
 
-test('rejects open paths and curves', () => {
+test('rejects open paths and arcs', () => {
   assert.throws(() => parseClosedPolygon('M 0 0 L 10 0 L 10 10'), /must end with Z/);
-  assert.throws(() => parseClosedPolygon('M 0 0 C 1 1 2 2 3 3 Z'), /unsupported/);
+  assert.throws(() => parseClosedPolygon('M 0 0 A 1 1 0 0 1 3 3 Z'), /unsupported/);
   assert.throws(() => parseClosedPolygon('M 0 0 10 10 Z'), /implicit repeats/);
 });
 
@@ -61,4 +61,23 @@ test('overrides: remove a computed pair, add a missing pair', () => {
 test('overrides with unknown ids fail loudly', () => {
   const indexOf = new Map([['c001', 0]]);
   assert.throws(() => applyOverrides([[]], indexOf, { add: [['c001', 'c999']] }), /unknown cell c999/);
+});
+
+test('quadratic curves (Q) are flattened into the outline', () => {
+  const p = parseClosedPolygon('M 100 0 Q 100 100 0 100 Q -100 100 -100 0 Q -100 -100 0 -100 Q 100 -100 100 0 Z');
+  assert.ok(p.length > 16, `expected many points, got ${p.length}`);
+  const a = area(p);
+  assert.ok(a > 25000 && a < 40000, `area ${a}`);
+});
+
+test('cubic curves (C) approximate a circle closely', () => {
+  const k = 55.23;
+  const d = `M 100 0 C 100 ${k} ${k} 100 0 100 C ${-k} 100 -100 ${k} -100 0 C -100 ${-k} ${-k} -100 0 -100 C ${k} -100 100 ${-k} 100 0 Z`;
+  const a = area(parseClosedPolygon(d));
+  assert.ok(Math.abs(a - Math.PI * 10000) / (Math.PI * 10000) < 0.01, `area ${a}`);
+});
+
+test('arcs and relative commands are still rejected', () => {
+  assert.throws(() => parseClosedPolygon('M 0 0 A 10 10 0 0 1 20 0 Z'), /unsupported/);
+  assert.throws(() => parseClosedPolygon('M 0 0 q 10 10 20 0 Z'), /unsupported/);
 });
