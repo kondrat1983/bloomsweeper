@@ -1,0 +1,48 @@
+{
+  "cells": 64,
+  "flowers": 34,
+  "leaves": 30,
+  "blooms": 16,
+  "creatures": [
+    "rabbit",
+    "fox",
+    "bee",
+    "bee",
+    "bee",
+    "bee (revealed)",
+    "bee",
+    "bee",
+    "bee",
+    "bee",
+    "bee",
+    "bee",
+    "bee",
+    "bee"
+  ],
+  "stages": [
+    {
+      "stage": 0,
+      "determined": 39
+    },
+    {
+      "stage": 1,
+      "determined": 64
+    }
+  ],
+  "allDetermined": true,
+  "revealOk": true,
+  "unique": true,
+  "gapsBetween3and12": 0,
+  "minCellSide": 63,
+  "degree": {
+    "min": 1,
+    "max": 4,
+    "avg": 2.16
+  },
+  "difficulty": {
+    "L1": 27,
+    "L2": 0,
+    "L3": 23,
+    "score": 142
+  }
+}

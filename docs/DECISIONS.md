@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: text size, phase 3 page art
+
+- **Text size:** every text in the game is at least 17 pt, secondary captions included. Phase 2 screens updated. Decided by Kondrat.
+- **Phase 3 delivered (waiting for Kondrat's review):** motif library (5 flowers × 3 sizes, 4 leaves, decoration) and a sample page `pages/garden/sample-p3` that passes `tools/validate`: 64 cells, 14 creatures, unique, no guessing, the hidden bee is needed, no gaps between 3 and 12 px. Files in `art/phase3/`.
+- **Page format:** cell paths may use `Q` and `C` curves (parser flattens them, tests added). New optional group `<g id="deco-top">` after the cells for details drawn over the paint.
+- **Known gaps for M1:** creature art still uses transforms (bake on import); the sample page has more creatures than the GDD's small-page range because the layout graph is sparse.
+
 ## 2026-11-02: phase 2 visual language
 
 - **Approved to proceed:** Kondrat liked the creatures and asked for phase 2.

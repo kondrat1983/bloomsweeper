@@ -177,10 +177,12 @@ invisible hit area:
 **The sample page** (`pages/garden-sample/page.svg`) proves the style and the rules work together:
 
 - `viewBox="0 0 1200 1600"`, portrait, about 60 cells (a "small" page), one focal motif.
-- Exactly three top-level groups, in this order:
-  - `<g id="deco">` all decoration;
+- Top-level groups, in this order:
+  - `<g id="deco">` decoration under the cells (stems, curls, ground texture);
   - `<g id="cells">` cells only: `<path id="c001" data-kind="flower" d="..."/>`, ids `c001`, `c002`
     and so on, `data-kind` is `flower` or `leaf`;
+  - `<g id="deco-top">` details drawn over the paint (flower centres, midribs, petal lines), never
+    interactive (added 2 Nov 2026 in phase 3);
   - `<g id="creatures">` each creature as `<g id="k01" data-type="bee" data-cell="c014">` holding
     its art. Put 4 to 6 creatures (bees, one rabbit, one fox) on leaf cells. Mark the fox as
     hidden-until-painted with `data-reveal="c020,c021"` listing the cells around it.
