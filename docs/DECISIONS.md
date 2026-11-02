@@ -2,6 +2,31 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: text size, phase 3 page art
+
+- **Text size:** every text in the game is at least 17 pt, secondary captions included. Phase 2 screens updated. Decided by Kondrat.
+- **Phase 3 delivered (waiting for Kondrat's review):** motif library (5 flowers × 3 sizes, 4 leaves, decoration) and a sample page `pages/garden/sample-p3` that passes `tools/validate`: 64 cells, 14 creatures, unique, no guessing, the hidden bee is needed, no gaps between 3 and 12 px. Files in `art/phase3/`.
+- **Page format:** cell paths may use `Q` and `C` curves (parser flattens them, tests added). New optional group `<g id="deco-top">` after the cells for details drawn over the paint.
+- **Known gaps for M1:** creature art still uses transforms (bake on import); the sample page has more creatures than the GDD's small-page range because the layout graph is sparse.
+
+## 2026-11-02: phase 2 visual language
+
+- **Approved to proceed:** Kondrat liked the creatures and asked for phase 2.
+- **Delivered (proposal, waiting for Kondrat's review):** tokens (colours, mark specs, five palettes, type, sizes, motion), UI kit (icons, tool states, tray chips, messages, buttons, feedback), and screens: Find, Deduce, Paint, Tutorial, rule cards for rabbit and fox, Page complete, Album, Title. Files in `art/phase2/`.
+- **Wordmark:** Caveat 700 (Google Fonts, OFL) for the logo and album title only; UI text stays the system font at 17 pt or more. Name is still a working title.
+
+## 2026-11-02: style chosen, first creatures
+
+- **Style:** direction A (clean pen) with the living line of B; ground texture of stipple and short grass dashes. Mood reference Hidden Folks (feel only). Decided by Kondrat.
+- **Creatures v1:** bee (walking, flying), rabbit (sitting, alert), fox (sitting, asleep), decorative moth, revealed fox before and after painting. Warm ink line, white bodies, solid ink accents. Sources in `art/phase1/`. Waiting for Kondrat's feedback.
+
+## 2026-11-02: mock-up approved, art via Claude Design
+
+- **Mock-ups approved:** Kondrat: "the mock-up looks good". The layout of `mockup/index.html` and `mockup/tutorial.html` is approved; UI code may start in M1. Decided by Kondrat.
+- **Art first:** before M1 UI code, an artist in Claude Design gets a brief (`docs/art/CLAUDE_DESIGN_BRIEF.md`) and delivers an implementation-ready package in three phases: style directions, visual language (tokens, UI kit, creatures), page art (motif library, sample page). Asked for by Kondrat.
+- **Package format:** cells as single closed SVG paths separated from decoration and creatures, no transforms, commands `M L H V C Q Z`, tokens in JSON, fixed folder structure and manifest. Reason: lets the dev team import and validate art without hand work.
+- **Tooling follow-up (M1):** the page parser accepts `C` and `Q` curves (flattened for geometry); the validator checks true cell width, 44 pt hit boxes and the 3 px / 12 px gap rule, so the artist's sample page can be checked on import.
+
 ## 2026-11-01: GDD review answers
 
 Review of GDD v0.2 by the `game-designer` agent; Kondrat answered six questions. GDD is now v0.3.

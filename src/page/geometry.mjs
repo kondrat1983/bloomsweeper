@@ -1,7 +1,9 @@
 // Cell outlines are closed polygons in SVG user units.
-// Supported path syntax: absolute M, L, H, V and Z, one closed subpath per cell.
+// Supported path syntax: absolute M, L, H, V, Q, C and Z, one closed subpath per cell.
+// Curves are flattened into short straight segments for geometry.
 
 const EPS = 1e-9;
+const CURVE_STEPS = 8;
 
 export function parseClosedPolygon(d) {
   const tokens = String(d).trim().match(/[A-Za-z]|-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/g) || [];
@@ -20,7 +22,7 @@ export function parseClosedPolygon(d) {
       i++;
       cmd = t;
       if (cmd === 'Z' || cmd === 'z') { closed = true; continue; }
-      if (!'MLHV'.includes(cmd)) throw new Error(`unsupported path command "${cmd}" (use absolute M, L, H, V, Z)`);
+      if (!'MLHVQC'.includes(cmd)) throw new Error(`unsupported path command "${cmd}" (use absolute M, L, H, V, Q, C, Z)`);
       continue;
     }
     if (closed) throw new Error('path continues after Z');
@@ -33,6 +35,22 @@ export function parseClosedPolygon(d) {
     } else if (cmd === 'V') {
       if (!pts.length) throw new Error('V before any point');
       pts.push([pts[pts.length - 1][0], num()]);
+    } else if (cmd === 'Q') {
+      if (!pts.length) throw new Error('Q before any point');
+      const [x0, y0] = pts[pts.length - 1];
+      const x1 = num(), y1 = num(), x = num(), y = num();
+      for (let k = 1; k <= CURVE_STEPS; k++) {
+        const t = k / CURVE_STEPS, u = 1 - t;
+        pts.push([u * u * x0 + 2 * u * t * x1 + t * t * x, u * u * y0 + 2 * u * t * y1 + t * t * y]);
+      }
+    } else if (cmd === 'C') {
+      if (!pts.length) throw new Error('C before any point');
+      const [x0, y0] = pts[pts.length - 1];
+      const x1 = num(), y1 = num(), x2 = num(), y2 = num(), x = num(), y = num();
+      for (let k = 1; k <= CURVE_STEPS; k++) {
+        const t = k / CURVE_STEPS, u = 1 - t;
+        pts.push([u * u * u * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x, u * u * u * y0 + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y]);
+      }
     } else {
       throw new Error('path must start with M');
     }

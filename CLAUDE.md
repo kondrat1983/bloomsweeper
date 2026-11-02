@@ -13,10 +13,10 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 - Rules engine lives in `src/rules/` and is shared by app and tools. Never duplicate rule logic.
 - All art and puzzles are original. Do not copy or trace other artists or games, even as placeholders.
 - Public repo: no personal data, no keys.
-- No UI code until Kondrat approves the static play-screen mock-up on Pages.
+- Mock-ups approved (2026-11-02). UI code starts in M1, after the Claude Design art package (see DECISIONS).
 - Autotests from the first commit of every feature (Node test runner, Playwright). Manual checks in Chrome.
   Manual test cases live in Google Sheets folder "Bloomsweeper QA" (see DECISIONS, 2026-10-31).
-- Every change to docs (GDD, FTUE, ART_BRIEF, REFERENCES, DECISIONS, SPEC) is mirrored to the Google Docs
+- Every change to docs (GDD, FTUE, ART_BRIEF, REFERENCES, CLAUDE_DESIGN_BRIEF, DECISIONS, SPEC) is mirrored to the Google Docs
   in Drive folder "Bloomsweeper Docs", and the test-case sheet is updated in the same session.
 - Creatures' rules (M1): bee (n of neighbours BLOOM), rabbit (cell and neighbours GREEN), fox
   (no BLOOM within two steps). Confirm in DECISIONS before coding them.
@@ -44,7 +44,7 @@ Run from the repo root (Node 22, no npm dependencies):
 ## Repo map
 
 - `SPEC.md`: technical spec and milestones (M0 tools, M1 vertical slice).
-- `docs/gdd/GDD.md`: game design (v0.2, full). `docs/gdd/FTUE.md`: tutorial. `docs/art/ART_BRIEF.md`: art rules. `docs/art/REFERENCES.md`: mood references (apps, not to copy).
+- `docs/gdd/GDD.md`: game design (v0.3, full). `docs/gdd/FTUE.md`: tutorial. `docs/art/ART_BRIEF.md`: art rules. `docs/art/REFERENCES.md`: mood references (apps, not to copy). `docs/art/CLAUDE_DESIGN_BRIEF.md` + `docs/art/brief/`: brief for the Claude Design artist.
 - `docs/DECISIONS.md`: decisions and open questions answers.
 - `.claude/agents/`: `game-designer`, `puzzle-engineer`, `artist`, `qa-tester`.
 - `.claude/skills/`: `page-format`, `solver`, `release`.

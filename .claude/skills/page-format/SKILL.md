@@ -8,12 +8,15 @@ description: Use when creating, editing, validating or debugging a Bloomsweeper 
 A page lives in `pages/<chapter>/<id>/`:
 
 - `page.svg`: viewBox `0 0 1200 1600`. Cells are `<path id="c001" data-kind="flower|leaf">` at the
-  top level of `<g id="cells">`. Decoration in `<g id="deco">`. Creatures in `<g id="creatures">`
+  top level of `<g id="cells">`. Decoration in `<g id="deco">` (under the cells) and
+  `<g id="deco-top">` (details over the paint, never interactive). Creatures in `<g id="creatures">`
   as `<g id="k01" data-type="bee" data-cell="c014" data-n="2">`; reveal creatures add
   `data-reveal="c020,c021"`.
 - `page.json`: generated, never edited by hand. Cells, adjacency, creatures, solution, stages,
   difficulty, validated stamp.
 - `page.overrides.json`: optional manual adjacency fixes, `{ "add": [["c001","c002"]], "remove": [] }`.
+
+Cell paths may use absolute `M L H V Q C Z` (curves are flattened for geometry).
 
 Workflow for a new page:
 
