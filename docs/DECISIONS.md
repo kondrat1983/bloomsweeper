@@ -2,6 +2,10 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: Claude merges to main
+
+- **Merging:** Claude merges finished branches into `main` itself, after unit tests, e2e tests and the validator pass, and reports what to check on the iPhone. Replaces "Kondrat merges" in SPEC section 0. Decided by Kondrat.
+
 ## 2026-11-02: M1 started, play screen v1
 
 - **Merged:** art brief and phases 1 to 3 into `main`. Decided by Kondrat ("merge and start M1").

@@ -8,7 +8,8 @@ Design: `docs/gdd/GDD.md`. Art: `docs/art/ART_BRIEF.md`. Decisions: `docs/DECISI
 - Talk to Kondrat in Russian, briefly. He works mostly from his phone.
 - Test first for anything with rules: adjacency, rule evaluation, solver, validator, save format.
   Test behaviour, not implementation. Fix root causes.
-- Small ordered commits, one feature per PR. Each PR lists what Kondrat must check on iPhone/iPad.
+- Small ordered commits, one feature per branch. Claude merges to `main` itself once unit tests, e2e tests
+  and the validator pass (Kondrat's OK, 2026-11-02), and tells Kondrat what to check on his iPhone.
 - Never ship a page that fails validation (unique solution, staged no-guess solvability, touch sizes).
 - Rules engine lives in `src/rules/` and is shared by app and tools. Never duplicate rule logic.
 - All art and puzzles are original. Do not copy or trace other artists or games, even as placeholders.
