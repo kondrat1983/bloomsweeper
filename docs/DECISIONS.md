@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: mock-up approved, art via Claude Design
+
+- **Mock-ups approved:** Kondrat: "the mock-up looks good". The layout of `mockup/index.html` and `mockup/tutorial.html` is approved; UI code may start in M1. Decided by Kondrat.
+- **Art first:** before M1 UI code, an artist in Claude Design gets a brief (`docs/art/CLAUDE_DESIGN_BRIEF.md`) and delivers an implementation-ready package in three phases: style directions, visual language (tokens, UI kit, creatures), page art (motif library, sample page). Asked for by Kondrat.
+- **Package format:** cells as single closed SVG paths separated from decoration and creatures, no transforms, commands `M L H V C Q Z`, tokens in JSON, fixed folder structure and manifest. Reason: lets the dev team import and validate art without hand work.
+- **Tooling follow-up (M1):** the page parser accepts `C` and `Q` curves (flattened for geometry); the validator checks true cell width, 44 pt hit boxes and the 3 px / 12 px gap rule, so the artist's sample page can be checked on import.
+
 ## 2026-11-01: GDD review answers
 
 Review of GDD v0.2 by the `game-designer` agent; Kondrat answered six questions. GDD is now v0.3.
