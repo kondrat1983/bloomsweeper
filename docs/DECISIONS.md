@@ -4,7 +4,7 @@ Newest first. Each entry: date, decision, why, who decided.
 
 ## 2026-11-02: generator, first chapter pages, game screens
 
-- **Generator (`tools/generate.mjs`, `src/gen/`):** five profiles: `teach-rabbit`, `teach-fox` (15 cells, one creature, its reach green, the rest blooms), `small` (60 cells, single-clue steps only), `medium` (150 cells) and `large` (300 cells), which must need at least one subset (L2) step. Every page it writes passes the validator.
+- **Generator (`tools/generate.mjs`, `src/gen/`):** five profiles: `teach-rabbit`, `teach-fox` (15 cells, one creature, its reach green, the rest blooms), `small` (60 cells, single-clue steps only), `medium` (150 cells) and `large` (250 cells), which must need at least one subset (L2) step. Every page it writes passes the validator.
 - **Garden pages:** 01 rabbit lesson, 02 fox lesson, 03 small (60 cells, 10 creatures), 04 medium (150 cells, 27 creatures, 2 L2 steps), 05 large (250 cells, 31 creatures, 2 L2 steps).
 - **At least 10% blooms on main pages:** a 300-cell try passed the validator with 9 blooms (almost all green, nothing to find). The generator now rejects pages under 10% blooms and `tests/pages.test.mjs` checks the shipped pages. The large page uses 250 cells (low end of GDD 8.2): with smaller cells the 44 pt creature tap areas leave too little room for clues.
 - **Creature counts above the GDD [?]:** small has 10 (GDD 4 to 8) and medium 27 (GDD 10 to 18); large 31 is inside its range (20 to 35). With the current layouts fewer clues leave cells undetermined. Proposal: accept for M1, revisit with the artist's hand-made layouts.
