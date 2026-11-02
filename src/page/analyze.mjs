@@ -13,6 +13,7 @@ export function analyze(model) {
   const steps = [];
   let stage = 0;
   let error = null;
+  const uselessReveals = [];
   try {
     for (;;) {
       const rules = [...visible].map((id) => creatureRule(byId.get(id), model.adjacency));
@@ -28,7 +29,8 @@ export function analyze(model) {
       stages.push({ stage, visible: [...visible].sort(), determined: state.reduce((n, v) => n + (v !== UNKNOWN ? 1 : 0), 0) });
       const newly = model.creatures.filter((k) => !visible.has(k.id) && k.reveal.length > 0 && k.reveal.every((c) => state[c] !== UNKNOWN));
       if (newly.length === 0) break;
-      for (const k of newly) visible.add(k.id);
+      const allKnown = state.every((v) => v !== UNKNOWN);
+      for (const k of newly) { visible.add(k.id); if (allKnown) uselessReveals.push(k.id); }
       stage++;
     }
   } catch (e) {
@@ -43,6 +45,8 @@ export function analyze(model) {
     steps,
     error,
     finalStage: stage,
+    uselessReveals,
+    neverRevealed: model.creatures.filter((k) => k.reveal.length > 0 && !visible.has(k.id)).map((k) => k.id),
     allDetermined: state.every((v) => v !== UNKNOWN),
     // Weights L1 = 1, L2 = 3, L3 = 5 (decided). Counts cells resolved per level, so the score grows with size.
     difficulty: { ...counts, score: counts.L1 + 3 * counts.L2 + 5 * counts.L3 },

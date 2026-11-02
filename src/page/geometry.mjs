@@ -119,6 +119,37 @@ function insidePolygon(p, poly) {
   return inside;
 }
 
+// Diameter of the largest circle that fits inside the polygon: the cell's true narrowest width.
+// Grid search, then a local refinement around the best point.
+export function narrowestWidth(poly) {
+  const b = bbox(poly);
+  const toEdge = (p) => { let d = Infinity; for (let i = 0; i < poly.length; i++) d = Math.min(d, pointSegment(p, poly[i], poly[(i + 1) % poly.length])); return d; };
+  const step = Math.max(1, Math.min(8, Math.min(b.width, b.height) / 12));
+  let best = { p: null, r: 0 };
+  for (let x = b.x0 + step / 2; x < b.x1; x += step) {
+    for (let y = b.y0 + step / 2; y < b.y1; y += step) {
+      const p = [x, y];
+      if (!insidePolygon(p, poly)) continue;
+      const r = toEdge(p);
+      if (r > best.r) best = { p, r };
+    }
+  }
+  if (!best.p) return 0;
+  for (let s = step / 2; s >= 0.25; s /= 2) {
+    let improved = true;
+    while (improved) {
+      improved = false;
+      for (const [dx, dy] of [[s, 0], [-s, 0], [0, s], [0, -s], [s, s], [-s, -s], [s, -s], [-s, s]]) {
+        const p = [best.p[0] + dx, best.p[1] + dy];
+        if (!insidePolygon(p, poly)) continue;
+        const r = toEdge(p);
+        if (r > best.r + 1e-9) { best = { p, r }; improved = true; }
+      }
+    }
+  }
+  return 2 * best.r;
+}
+
 // Smallest distance between the outlines of two polygons. 0 when they overlap or one contains the other.
 export function distance(A, B) {
   for (let i = 0; i < A.length; i++) {

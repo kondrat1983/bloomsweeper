@@ -6,7 +6,8 @@ import { buildPageJson } from './pagejson.mjs';
 import { creatureRule } from '../rules/creatures.mjs';
 import { BLOOM, GREEN } from '../rules/cells.mjs';
 import { countSolutions } from '../solver/count.mjs';
-import { MIN_CELL_PX } from '../limits.mjs';
+import { MIN_CELL_PX, HIT_R, GAP_TOUCH_MAX, GAP_APART_MIN } from '../limits.mjs';
+import { narrowestWidth, distance } from './geometry.mjs';
 
 // The gate (SPEC section 5). Returns { ok, errors, warnings, report }.
 export function validatePage(dir) {
@@ -16,8 +17,24 @@ export function validatePage(dir) {
   if (errors.length) return { ok: false, errors, warnings, report: null };
 
   for (const c of model.cells) {
-    const side = Math.min(c.bbox.width, c.bbox.height);
-    if (side < MIN_CELL_PX) errors.push(`cell ${c.id} is ${side.toFixed(1)} px across, minimum ${MIN_CELL_PX}`);
+    const w = Math.min(c.bbox.width, c.bbox.height) < MIN_CELL_PX ? Math.min(c.bbox.width, c.bbox.height) : narrowestWidth(c.polygon);
+    if (w < MIN_CELL_PX) errors.push(`cell ${c.id} is ${w.toFixed(1)} px across at its narrowest, minimum ${MIN_CELL_PX}`);
+  }
+  for (let i = 0; i < model.creatures.length; i++) {
+    for (let j = i + 1; j < model.creatures.length; j++) {
+      const a = model.creatures[i], b = model.creatures[j];
+      const [ax, ay] = model.cells[a.cell].centroid, [bx, by] = model.cells[b.cell].centroid;
+      const d = Math.hypot(ax - bx, ay - by);
+      if (d < 2 * HIT_R) errors.push(`tap areas of ${a.id} and ${b.id} overlap (${d.toFixed(1)} px apart, need ${2 * HIT_R})`);
+    }
+  }
+  for (let i = 0; i < model.cells.length; i++) {
+    for (let j = i + 1; j < model.cells.length; j++) {
+      const A = model.cells[i], B = model.cells[j];
+      if (A.bbox.x0 - B.bbox.x1 > GAP_APART_MIN || B.bbox.x0 - A.bbox.x1 > GAP_APART_MIN || A.bbox.y0 - B.bbox.y1 > GAP_APART_MIN || B.bbox.y0 - A.bbox.y1 > GAP_APART_MIN) continue;
+      const d = distance(A.polygon, B.polygon);
+      if (d > GAP_TOUCH_MAX && d < GAP_APART_MIN) warnings.push(`cells ${A.id} and ${B.id} are ${d.toFixed(1)} px apart: touching should be at most ${GAP_TOUCH_MAX} px, apart at least ${GAP_APART_MIN} px`);
+    }
   }
   for (const k of model.creatures) {
     if (model.cells[k.cell].kind !== 'leaf') errors.push(`creature ${k.id} sits on flower ${model.cells[k.cell].id} (creatures sit on leaves)`);
@@ -53,6 +70,8 @@ export function validatePage(dir) {
   else if (cnt.count > 1) errors.push('solution is not unique: at least 2 solutions satisfy the clues');
 
   const a = analyze(model);
+  for (const id of a.uselessReveals) errors.push(`creature ${id} is revealed after every cell is solved, so its clue is never needed`);
+  for (const id of a.neverRevealed) errors.push(`creature ${id} never appears: its reveal cells are never all solved`);
   if (a.error) {
     errors.push(`stage ${a.error.stage}: contradiction while solving: ${a.error.message}`);
   } else if (!a.allDetermined) {

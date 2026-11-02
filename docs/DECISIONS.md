@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, decision, why, who decided.
 
+## 2026-11-02: validator checks for M1
+
+- **Reveal must matter:** a creature revealed after every cell is solved, or never revealed, fails validation (VAL-01). The M0 fixture page was rebuilt to pass.
+- **True cell width:** cells are measured by the largest circle that fits inside, not the bounding box (VAL-03). Minimum stays 22 px.
+- **Tap areas:** creature tap areas are circles of 34 page px around their cell: 44 pt at the 2x play zoom on a 390 pt phone. Overlapping tap areas fail validation (VAL-02). The app uses the same radius.
+- **Gap rule:** gaps between 3 and 12 px are reported as warnings while the rule is a proposal [?].
+
 ## 2026-11-02: Claude merges to main
 
 - **Merging:** Claude merges finished branches into `main` itself, after unit tests, e2e tests and the validator pass, and reports what to check on the iPhone. Replaces "Kondrat merges" in SPEC section 0. Decided by Kondrat.
