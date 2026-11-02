@@ -2,6 +2,7 @@
 import { Game } from '../game/state.mjs';
 import { saveGame, loadGame } from '../game/save.mjs';
 import { nextHint } from '../game/hint.mjs';
+import { HIT_R } from '../limits.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const PAGE_W = 1200, PAGE_H = 1600;
@@ -79,7 +80,7 @@ function mountSvg(svgText, page) {
   layers.hits = el('g', { id: 'ov-hits' }, svg);
   for (const k of game.creatures) {
     const [x, y] = centroids.get(k.cell);
-    el('circle', { cx: x, cy: y, r: 36, fill: 'transparent', 'data-creature': k.id }, layers.hits);
+    el('circle', { cx: x, cy: y, r: HIT_R, fill: 'transparent', 'data-creature': k.id }, layers.hits);
   }
 }
 
